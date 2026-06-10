@@ -42,11 +42,11 @@ cat > "${BASE_DIR}/config/agent_config.json" <<EOF
     "max_archive_size_mb": 500
   },
   "intervals": {
-    "health_check": 10,
-    "sync": 10,
-    "cleanup": 60,
-    "acquisition_interval": 5,
-    "wifi_interval": 10
+    "health_check": 30,
+    "sync": 15,
+    "cleanup": 300,
+    "acquisition_interval": 30,
+    "wifi_interval": 60
   }
 }
 EOF

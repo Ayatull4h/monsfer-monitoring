@@ -48,7 +48,7 @@ def run():
             fn = paths['upload'] / f"{station_id_str}_HEALTH_{ts}.json"
             paths['upload'].mkdir(parents=True, exist_ok=True)
             
-            with open(fn, 'w') as f:
+            with open(fn, 'w', encoding='utf-8') as f:
                 json.dump(payload, f, indent=2)
                 
             logger.info(f"Generated Health JSON: {fn.name}")

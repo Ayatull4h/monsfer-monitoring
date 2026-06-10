@@ -19,19 +19,20 @@ def read_subservices(base_dir):
             with open(csv_path, 'r', encoding='utf-8') as f:
                 reader = csv.reader(f, delimiter=';')
                 for row in reader:
-                    if len(row) >= 5 and row[4] == '1': # Active
+                    if len(row) >= 5 and row[4] == '1':
+                        step_hz = int(row[5]) if len(row) >= 6 and row[5].strip().isdigit() else 100000
                         bands.append({
                             'band_number': int(row[0]),
                             'name': row[1],
                             'start_hz': int(row[2]),
                             'stop_hz': int(row[3]),
-                            'step_hz': 6250 # Default step 6.25kHz
+                            'step_hz': step_hz
                         })
             return bands
         except Exception as e:
             logger.error(f"Error reading subservice.csv: {e}")
-    
-    # Default bands if file missing
+            logger.error(f"Pastikan format CSV: band;name;start_hz;stop_hz;active;step_hz")
+
     return [
         {'band_number': 1, 'name': 'Radio FM', 'start_hz': 88000000, 'stop_hz': 108000000, 'step_hz': 100000}
     ]
@@ -156,6 +157,7 @@ def run():
     base_dir = Path(__file__).parent.absolute()
     
     while True:
+        loop_start = time.time()
         try:
             config = load_config()
             paths = get_paths(config)
@@ -165,7 +167,6 @@ def run():
             identity = read_identity(base_dir, config)
             bands = read_subservices(base_dir)
             
-            ts = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
             out_filename = f"{identity['station_id']}_MONITORING_{datetime.utcnow().strftime('%Y-%m-%d_%H-%M-%S')}.csv"
             out_path = paths['data'] / out_filename
             
@@ -180,18 +181,20 @@ def run():
                     'data': data
                 })
             
-            # Write aggregated final CSV
             generate_final_csv(identity, bands_data, out_path)
             
-            # Move to upload queue
             final_upload_path = paths['upload'] / out_filename
             out_path.rename(final_upload_path)
-            logger.info(f"Successfully generated and queued: {final_upload_path.name}")
+            logger.info(f"Generated and queued: {final_upload_path.name}")
             
         except Exception as e:
             logger.error(f"Fatal error in acquisition loop: {e}")
             
-        time.sleep(config.get('intervals', {}).get('acquisition_interval', 60))
+        elapsed = time.time() - loop_start
+        base_interval = config.get('intervals', {}).get('acquisition_interval', 60)
+        sleep_time = max(1, base_interval - elapsed)
+        logger.info(f"Scan took {elapsed:.1f}s, sleeping {sleep_time:.1f}s before next cycle")
+        time.sleep(sleep_time)
 
 if __name__ == "__main__":
     run()
