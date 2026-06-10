@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>System Info - Direct Display</title>
+    <style>
+        body { 
+            font-family: 'Inter', Arial, sans-serif; 
+            margin: 20px; 
+            background-color: #0a0a0a; 
+            color: #e5e5e5;
+        }
+        h1 { color: #e5e5e5; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+        .info-item { margin: 10px 0; }
+        .badge { padding: 5px 10px; border-radius: 4px; color: #000; font-weight: bold; }
+        .success { background-color: #10b981; }
+        .error { background-color: #ef4444; }
+        .metric { 
+            margin: 20px 0; 
+            padding: 15px; 
+            border: 1px solid rgba(255,255,255,0.12); 
+            border-radius: 4px; 
+            background-color: #161616;
+        }
+        .metric-title { font-weight: bold; margin-bottom: 10px; color: #a3a3a3; font-size: 0.9em; text-transform: uppercase; }
+        hr { border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0; }
+        strong { color: #a3a3a3; }
+    </style>
+</head>
+<body>
+    <h1>System Information - plamongan_indah</h1>
+    
+    <div class="info-item">
+        <strong>Device Status:</strong> 
+        <span class="badge success">ONLINE</span>
+    </div>
+    
+    <div class="info-item">
+        <strong>Last Update:</strong> 2025-11-12 13:23:44
+    </div>
+    
+    <div class="info-item">
+        <strong>Version:</strong> 1.1.2
+    </div>
+    
+    <div class="info-item">
+        <strong>Database Status:</strong> 
+        <span class="badge success">CONNECTED</span>
+    </div>
+    
+    <hr>
+    
+    <div class="metric">
+        <div class="metric-title">CPU Utilization</div>
+        <div style="font-size: 1.5em; font-weight: bold; color: #e5e5e5;">9.4%</div>
+    </div>
+    
+    <div class="metric">
+        <div class="metric-title">CPU Temperature</div>
+        <div style="font-size: 1.5em; font-weight: bold; color: #e5e5e5;">27.8°C</div>
+    </div>
+    
+    <div class="metric">
+        <div class="metric-title">Storage Usage</div>
+        <div style="margin-bottom: 5px;">Free: 1759.82 GB / Total: 1948.17 GB</div>
+        <div style="color: #10b981;">Used: 188.35 GB (9.7%)</div>
+    </div>
+    
+    <div class="metric">
+        <div class="metric-title">Memory Usage</div>
+        <div style="margin-bottom: 5px;">Free: 2769.0 MB / Total: 7855.0 MB</div>
+        <div style="color: #f59e0b;">Used: 5086.0 MB (64.8%)</div>
+    </div>
+</body>
+</html>

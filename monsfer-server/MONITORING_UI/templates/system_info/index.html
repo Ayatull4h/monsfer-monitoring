@@ -1,0 +1,605 @@
+{% extends "layout.html" %}
+
+{% block head %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="/js/components/echarts.js"></script>
+<style>
+    /* SYSTEM INFO SPECIFIC STYLES */
+    .si-container {
+        padding: 24px 32px;
+        max-width: 1600px;
+        margin: 0 auto;
+    }
+
+    /* Page Header */
+    .page-header {
+        margin-bottom: 32px;
+    }
+
+    .page-title h1 {
+        font-size: 24px;
+        font-weight: 600;
+        margin: 0;
+        color: var(--text-white);
+    }
+
+    .page-title p {
+        margin: 4px 0 0;
+        color: var(--text-gray);
+        font-size: 14px;
+    }
+
+    /* System Status Card */
+    .status-card {
+        background: var(--bg-card);
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.05);
+        padding: 24px;
+        margin-bottom: 24px;
+        position: relative;
+    }
+
+    .status-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+        border-bottom: 1px solid var(--border-dark);
+        padding-bottom: 16px;
+    }
+
+    .status-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text-white);
+    }
+
+    .online-badge {
+        background: rgba(34, 197, 94, 0.1);
+        color: var(--success);
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        border: 1px solid rgba(34, 197, 94, 0.2);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .online-badge::before {
+        content: '';
+        display: block;
+        width: 8px;
+        height: 8px;
+        background: var(--success);
+        border-radius: 50%;
+        box-shadow: 0 0 8px var(--success);
+    }
+
+    .status-metrics {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 24px;
+    }
+
+    .metric-item small {
+        display: block;
+        color: var(--text-gray);
+        font-size: 12px;
+        margin-bottom: 8px;
+    }
+
+    .metric-item .value {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--text-white);
+    }
+
+    .temp-value {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-white);
+        font-size: 24px;
+        font-weight: 600;
+    }
+    .temp-icon { color: #3b82f6; }
+
+    /* Resource Cards */
+    .resource-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 24px;
+        margin-bottom: 24px;
+    }
+
+    .resource-card {
+        background: var(--bg-card);
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.05);
+        padding: 24px;
+    }
+
+    .resource-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+
+    .resource-label {
+        color: var(--text-gray);
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .resource-val {
+        color: var(--text-white);
+        font-weight: 600;
+        font-size: 18px;
+    }
+
+    .progress-track {
+        background: #1e293b;
+        height: 8px;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #6366f1, #8b5cf6);
+        border-radius: 4px;
+        width: 0%; /* JS will animate */
+        transition: width 1s ease;
+    }
+
+    /* Charts Row */
+    .charts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+        gap: 24px;
+        margin-bottom: 24px;
+    }
+
+    .chart-card {
+        background: var(--bg-card);
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.05);
+        padding: 24px;
+    }
+    
+    .chart-title {
+        color: var(--text-gray);
+        font-size: 14px;
+        margin-bottom: 16px;
+    }
+
+    .chart-area {
+        height: 200px;
+        width: 100%;
+    }
+
+    .metric-item .value.value--compact {
+        font-size: 16px;
+        font-weight: 500;
+        padding-top: 6px;
+    }
+
+    @media (max-width: 768px) {
+        .si-container { padding: 16px; }
+        .status-card, .resource-card, .chart-card { padding: 16px; }
+        .charts-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Anomalies */
+    .anomalies-title {
+        color: var(--text-white);
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 16px;
+    }
+
+    .alert-card {
+        background: rgba(239, 68, 68, 0.05);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        border-radius: 8px;
+        padding: 16px 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .alert-content {
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+    }
+
+    .alert-icon {
+        color: var(--danger);
+        font-size: 20px;
+        margin-top: 2px;
+    }
+
+    .alert-text h4 {
+        color: var(--text-white);
+        font-size: 14px;
+        font-weight: 600;
+        margin: 0 0 4px 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .badge-critical {
+        background: var(--danger);
+        color: white;
+        font-size: 10px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        text-transform: uppercase;
+    }
+
+    .alert-text p {
+        color: var(--text-gray);
+        font-size: 13px;
+        margin: 0;
+    }
+
+    .alert-meta {
+        text-align: right;
+        font-size: 12px;
+        color: var(--text-gray);
+    }
+    .alert-meta div { margin-bottom: 4px; }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="si-container">
+    <div class="page-header">
+        <div class="card-header-flex" style="margin-bottom: 0;">
+            <div class="page-title">
+                <h1>System Information</h1>
+                <p>Monitor kesehatan dan performa perangkat SDR</p>
+            </div>
+            <div style="display:flex; gap:12px; align-items:center; flex-wrap: wrap;">
+                <!-- Download removed to avoid redundancy -->
+            </div>
+        </div>
+    </div>
+
+    {% raw %}
+    <!-- System Status -->
+    <div class="status-card">
+        <div class="status-header">
+            <span class="status-title">System Status</span>
+            <div class="online-badge" :style="{ 
+                color: isOnline ? 'var(--success)' : 'var(--danger)', 
+                background: isOnline ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)', 
+                borderColor: isOnline ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)' 
+            }">
+                {{ isOnline ? 'Online' : 'Offline' }}
+            </div>
+        </div>
+        <div class="status-metrics">
+            <div class="metric-item">
+                <small>Uptime</small>
+                <div class="value">{{ sysUptimeText }}</div>
+            </div>
+            <div class="metric-item">
+                <small>Last Heartbeat</small>
+                <div class="value value--compact">{{ sysLastHbText }}</div>
+            </div>
+            <div class="metric-item">
+                <small>Temperature</small>
+                <div class="temp-value">
+                    <i class="bi bi-thermometer-half temp-icon"></i> {{ sysInfo.cpuTemp !== undefined ? parseFloat(sysInfo.cpuTemp).toFixed(1) + '°C' : '-' }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resources -->
+    <div class="resource-grid">
+        <div class="resource-card">
+            <div class="resource-header">
+                <div class="resource-label"><i class="bi bi-cpu"></i> CPU Usage</div>
+                <div class="resource-val">{{ sysInfo.cpuUtil !== undefined ? parseFloat(sysInfo.cpuUtil).toFixed(1) + '%' : '0%' }}</div>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill" :style="{ width: (sysInfo.cpuUtil || 0) + '%' }"></div>
+            </div>
+        </div>
+        <div class="resource-card">
+            <div class="resource-header">
+                <div class="resource-label"><i class="bi bi-memory"></i> Memory Usage</div>
+                <div class="resource-val">{{ sysMemText }}</div>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill" :style="{ width: sysMemPercent + '%' }"></div>
+            </div>
+        </div>
+        <div class="resource-card">
+            <div class="resource-header">
+                <div class="resource-label"><i class="bi bi-hdd"></i> Disk Usage</div>
+                <div class="resource-val">{{ sysDiskText }}</div>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill" :style="{ width: sysDiskPercent + '%' }"></div>
+            </div>
+        </div>
+    </div>
+    {% endraw %}
+
+    <!-- Charts -->
+    <div class="charts-grid">
+        <div class="chart-card">
+            <div class="chart-title">CPU Usage (24h)</div>
+            <div id="cpuChart" class="chart-area"></div>
+        </div>
+        <div class="chart-card">
+            <div class="chart-title">Memory Usage (24h)</div>
+            <div id="memChart" class="chart-area"></div>
+        </div>
+    </div>
+
+    <!-- Anomalies -->
+    <div class="anomalies-title">System Anomalies</div>
+    <div class="alert-card">
+        <div class="alert-content">
+            <i class="bi bi-x-circle alert-icon"></i>
+            <div class="alert-text">
+                <h4>System Offline <span class="badge-critical">CRITICAL</span></h4>
+                <p>SDR device went offline unexpectedly</p>
+                <div style="margin-top: 8px; font-size: 11px; color: #64748b;">
+                    Time Before Offline: 2026-01-08 02:45:12
+                </div>
+            </div>
+        </div>
+        <div class="alert-meta">
+            <div>Offline Time</div>
+            <div style="color: var(--text-white);">2026-01-08 03:15:30</div>
+            <div style="margin-top: 8px;">Duration</div>
+            <div style="color: var(--text-white);">5m 45s</div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    (function () {
+        'use strict';
+
+        window.pageMixin = {
+            data() {
+                return {
+                    sysInfo: {},
+                    isSysLoading: false,
+                    cpuChartInstance: null,
+                    memChartInstance: null
+                };
+            },
+            computed: {
+                isOnline() {
+                    if (!this.sysInfo || !this.sysInfo.timestamp) return false;
+                    const dt = new Date(this.sysInfo.timestamp);
+                    const diff = (new Date() - dt) / 1000;
+                    return diff < 300; // 5 minutes threshold
+                },
+                sysUptimeText() {
+                    let up = this.sysInfo.uptime_seconds;
+                    if (up === undefined || up === null) up = this.sysInfo.uptime;
+                    if (typeof up === 'number' && isFinite(up) && up >= 0) {
+                        const d = Math.floor(up / 86400);
+                        const h = Math.floor((up % 86400) / 3600);
+                        const m = Math.floor((up % 3600) / 60);
+                        const s = Math.floor(up % 60);
+                        const parts = [];
+                        if (d > 0) parts.push(`${d}d`);
+                        parts.push(`${String(h).padStart(2, '0')}h:${String(m).padStart(2, '0')}m:${String(s).padStart(2, '0')}s`);
+                        return parts.join(' ');
+                    }
+                    return '-';
+                },
+                sysLastHbText() {
+                    if (!this.sysInfo || !this.sysInfo.timestamp) return '-';
+                    return new Date(this.sysInfo.timestamp).toLocaleString();
+                },
+                sysMemPercent() {
+                    if (this.sysInfo.freeRAM !== undefined && this.sysInfo.totalRAM !== undefined && this.sysInfo.totalRAM > 0) {
+                        const used = this.sysInfo.totalRAM - this.sysInfo.freeRAM;
+                        return parseFloat(((used / this.sysInfo.totalRAM) * 100).toFixed(1));
+                    }
+                    return 0;
+                },
+                sysMemText() {
+                    if (this.sysInfo.freeRAM !== undefined && this.sysInfo.totalRAM !== undefined) {
+                        const pct = this.sysMemPercent;
+                        return `${pct}%`;
+                    }
+                    return '0%';
+                },
+                sysDiskPercent() {
+                    if (this.sysInfo.freeStorage !== undefined && this.sysInfo.totalStorage !== undefined && this.sysInfo.totalStorage > 0) {
+                        const used = this.sysInfo.totalStorage - this.sysInfo.freeStorage;
+                        return parseFloat(((used / this.sysInfo.totalStorage) * 100).toFixed(1));
+                    }
+                    return 0;
+                },
+                sysDiskText() {
+                    if (this.sysInfo.freeStorage !== undefined && this.sysInfo.totalStorage !== undefined) {
+                        const pct = this.sysDiskPercent;
+                        const used = this.sysInfo.totalStorage - this.sysInfo.freeStorage;
+                        return `${pct}% (${used.toFixed(1)}/${this.sysInfo.totalStorage.toFixed(1)} GB)`;
+                    }
+                    return '0%';
+                }
+            },
+            methods: {
+                async fetchSysMetrics() {
+                    try {
+                        const site = this.currentSiteName || '';
+                        const url = site ? `/api/system/metrics?site=${encodeURIComponent(site)}` : '/api/system/metrics';
+                        const resp = await fetch(url, { credentials: 'same-origin' });
+                        if (!resp.ok) return;
+                        const payload = await resp.json();
+                        if (payload.ok && payload.data) {
+                            this.sysInfo = payload.data;
+                        }
+                    } catch (e) {
+                        console.error("Failed to fetch system metrics:", e);
+                    }
+                },
+                async fetchSysHistory() {
+                    try {
+                        const site = this.currentSiteName || '';
+                        const url = `/api/system/metrics/download?days=1&format=json&site=${encodeURIComponent(site)}`;
+                        const resp = await fetch(url, { credentials: 'same-origin' });
+                        if (!resp.ok) return;
+                        const data = await resp.json();
+                        if (!Array.isArray(data)) return;
+
+                        data.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+                        const maxPoints = 100;
+                        const step = Math.ceil(data.length / maxPoints);
+                        const sampled = data.filter((_, i) => i % step === 0);
+
+                        const times = sampled.map(d => {
+                            const dt = new Date(d.timestamp);
+                            return dt.getHours() + ':' + String(dt.getMinutes()).padStart(2, '0');
+                        });
+                        const cpuData = sampled.map(d => parseFloat(d.cpuUtil || 0));
+                        const memData = sampled.map(d => {
+                            if (d.totalRAM > 0) {
+                                    return ((d.totalRAM - d.freeRAM) / d.totalRAM * 100).toFixed(1);
+                            }
+                            return 0;
+                        });
+
+                        this.updateCharts(times, cpuData, memData);
+                    } catch (e) {
+                        console.error("Failed to fetch history:", e);
+                    }
+                },
+                updateCharts(times, cpuData, memData) {
+                    if (!this.cpuChartInstance || !this.memChartInstance) return;
+                    this.cpuChartInstance.setOption({
+                        xAxis: { data: times },
+                        series: [{ data: cpuData }]
+                    });
+                    this.memChartInstance.setOption({
+                        xAxis: { data: times },
+                        series: [{ data: memData }]
+                    });
+                },
+                initSysCharts() {
+                    const commonOptions = {
+                        grid: { top: 10, right: 10, bottom: 20, left: 30, containLabel: true },
+                        xAxis: {
+                            type: 'category',
+                            data: [],
+                            axisLine: { lineStyle: { color: '#334155' } },
+                            axisLabel: { color: '#94a3b8' }
+                        },
+                        yAxis: {
+                            type: 'value',
+                            splitLine: { lineStyle: { color: '#1e293b', type: 'dashed' } },
+                            axisLabel: { color: '#94a3b8' },
+                            max: 100
+                        },
+                        tooltip: { 
+                            trigger: 'axis',
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            borderColor: '#334155',
+                            textStyle: { color: '#f1f5f9' }
+                        }
+                    };
+
+                    const cpuEl = document.getElementById('cpuChart');
+                    const memEl = document.getElementById('memChart');
+                    if (!cpuEl || !memEl) return;
+
+                    this.cpuChartInstance = echarts.init(cpuEl);
+                    this.cpuChartInstance.setOption({
+                        ...commonOptions,
+                        series: [{
+                            data: [],
+                            type: 'line',
+                            smooth: true,
+                            symbol: 'none',
+                            lineStyle: { color: '#3b82f6', width: 2 },
+                            areaStyle: {
+                                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                    { offset: 0, color: 'rgba(59, 130, 246, 0.3)' },
+                                    { offset: 1, color: 'rgba(59, 130, 246, 0)' }
+                                ]).value
+                            }
+                        }]
+                    });
+
+                    this.memChartInstance = echarts.init(memEl);
+                    this.memChartInstance.setOption({
+                        ...commonOptions,
+                        series: [{
+                            data: [],
+                            type: 'line',
+                            smooth: true,
+                            symbol: 'none',
+                            lineStyle: { color: '#22c55e', width: 2 },
+                            areaStyle: {
+                                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                    { offset: 0, color: 'rgba(34, 197, 94, 0.3)' },
+                                    { offset: 1, color: 'rgba(34, 197, 94, 0)' }
+                                ]).value
+                            }
+                        }]
+                    });
+
+                    window.addEventListener('resize', () => {
+                        if (this.cpuChartInstance) this.cpuChartInstance.resize();
+                        if (this.memChartInstance) this.memChartInstance.resize();
+                    });
+                }
+            },
+            watch: {
+                currentSiteName: {
+                    handler(newSite) {
+                        console.log("System Info page detected site change to:", newSite);
+                        this.fetchSysMetrics();
+                        this.fetchSysHistory();
+                    },
+                    immediate: true
+                }
+            },
+            mounted() {
+                this.$nextTick(() => {
+                    this.initSysCharts();
+                    this.fetchSysMetrics();
+                    this.fetchSysHistory();
+
+                    this.metricsInterval = setInterval(this.fetchSysMetrics, 15000);
+                    this.historyInterval = setInterval(this.fetchSysHistory, 120000);
+                });
+            },
+            beforeDestroy() {
+                if (this.metricsInterval) clearInterval(this.metricsInterval);
+                if (this.historyInterval) clearInterval(this.historyInterval);
+                if (this.cpuChartInstance) this.cpuChartInstance.dispose();
+                if (this.memChartInstance) this.memChartInstance.dispose();
+            }
+        };
+    })();
+</script>
+{% endblock %}

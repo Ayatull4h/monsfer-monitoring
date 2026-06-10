@@ -1,0 +1,67 @@
+{% include 'base.html' %}
+
+{% block content %}
+<div id="systemContent" class="content-section" style="display: none;">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <div class="dashboard-header">
+            <h1 class="h2 mb-0">System Information</h1>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <ul class="nav nav-tabs" id="systemInfoTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="folders-tab" data-bs-toggle="tab" data-bs-target="#folders" type="button" role="tab" onclick="checkFolders()">
+                        <i class="bi bi-folder me-2"></i>Folders
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="errors-tab" data-bs-toggle="tab" data-bs-target="#errors" type="button" role="tab" onclick="checkErrors()">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Warnings
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="orphaned-tab" data-bs-toggle="tab" data-bs-target="#orphaned" type="button" role="tab" onclick="checkOrphaned()">
+                        <i class="bi bi-folder-x me-2"></i>Orphaned
+                    </button>
+                </li>
+            </ul>
+            <div class="tab-content p-3" id="systemInfoTabsContent">
+                <div class="tab-pane fade show active" id="folders" role="tabpanel">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="mb-0">Folder Status</h6>
+                        <button class="btn btn-sm btn-primary" onclick="checkFolders()">
+                            <i class="bi bi-arrow-clockwise"></i> Refresh
+                        </button>
+                    </div>
+                    <div id="folderStatus" class="list-group">
+                        <!-- Folder status will be loaded here -->
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="errors" role="tabpanel">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="mb-0">Peringatan Sistem</h6>
+                        <button class="btn btn-sm btn-primary" onclick="checkErrors()">
+                            <i class="bi bi-arrow-clockwise"></i> Muat Ulang
+                        </button>
+                    </div>
+                    <div id="errorList" class="list-group">
+                        <!-- Errors will be loaded here -->
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="orphaned" role="tabpanel">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="mb-0">Orphaned Folders</h6>
+                        <button class="btn btn-sm btn-primary" onclick="checkOrphaned()">
+                            <i class="bi bi-arrow-clockwise"></i> Refresh
+                        </button>
+                    </div>
+                    <div id="orphanedList" class="list-group">
+                        <!-- Orphaned folders will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

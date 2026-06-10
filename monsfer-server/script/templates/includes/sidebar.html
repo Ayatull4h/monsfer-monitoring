@@ -1,0 +1,63 @@
+<!-- Sidebar -->
+<div class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse" id="sidebarMenu">
+    <div class="position-sticky pt-3">
+        <!-- Logo and App Name -->
+        <div class="text-center mb-4">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="MONSFER Logo" class="mb-2" style="height: 40px;">
+            <h5 class="text-dark">{{ lang_manager.get_text('common.app_name') }}</h5>
+        </div>
+
+        <!-- Navigation Menu -->
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}" 
+                   href="{{ url_for('dashboard') }}">
+                    <i class="bi bi-house-door"></i>
+                    {{ lang_manager.get_text('common.dashboard') }}
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'upts_page' %}active{% endif %}" 
+                   href="{{ url_for('upts_page') }}">
+                    <i class="bi bi-people"></i>
+                    {{ lang_manager.get_text('upt.title') }}
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'settings' %}active{% endif %}" 
+                   href="{{ url_for('settings') }}">
+                    <i class="bi bi-gear"></i>
+                    {{ lang_manager.get_text('settings.title') }}
+                </a>
+            </li>
+        </ul>
+
+        <!-- User Menu -->
+        <div class="dropdown mt-4">
+            <a class="d-flex align-items-center text-dark text-decoration-none dropdown-toggle" 
+               href="#" id="userDropdown" 
+               role="button" 
+               data-bs-toggle="dropdown" 
+               aria-expanded="false">
+                <i class="bi bi-person-circle me-2"></i>
+                <span>{{ session.get('username', 'User') }}</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="userDropdown">
+                <li><a class="dropdown-item" href="{{ url_for('settings') }}">
+                    <i class="bi bi-gear me-2"></i>{{ lang_manager.get_text('settings.title') }}
+                </a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="{{ url_for('logout') }}">
+                    <i class="bi bi-box-arrow-right me-2"></i>{{ lang_manager.get_text('common.logout') }}
+                </a></li>
+            </ul>
+        </div>
+
+        <!-- Theme Toggle -->
+        <div class="mt-4">
+            <button class="btn btn-sm btn-outline-secondary w-100" id="themeToggle">
+                <i class="bi bi-moon-stars"></i> {{ lang_manager.get_text('settings.theme.dark_mode') }}
+            </button>
+        </div>
+    </div>
+</div> 

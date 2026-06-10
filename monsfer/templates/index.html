@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monsfer SDR Agent - Local UI</title>
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --surface: #1e293b;
+            --primary: #3b82f6;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --danger: #ef4444;
+        }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text);
+            margin: 0;
+            padding: 2rem;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 1rem;
+        }
+        h1 { margin: 0; font-size: 1.5rem; font-weight: 600; }
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        .status-badge.stopped {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .card {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid #334155;
+        }
+        .card-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+        }
+        .stat-label { color: var(--text-muted); }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--bg-dark);
+            border: 1px solid #334155;
+            color: var(--text);
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            width: 100%;
+        }
+        button:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>SDR Agent Data Factory</h1>
+        <div class="status-badge {{ 'stopped' if status == 'Stopped' else '' }}" id="agent-status">
+            {{ status }}
+        </div>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <h2 class="card-title">System Health</h2>
+            <div class="stat-row">
+                <span class="stat-label">CPU Usage</span>
+                <span id="cpu-usage">--%</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Memory</span>
+                <span id="mem-usage">--%</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Disk Space</span>
+                <span id="disk-usage">--%</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="card-title">Site Simulation</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Generate dummy SDR data to test backend synchronization for specific sites.</p>
+            <div class="form-group">
+                <label>Target Station ID</label>
+                <input type="text" id="sim-station" placeholder="e.g. 07plamongan_indah">
+            </div>
+            <button onclick="runSimulation()" id="sim-btn" style="background: var(--success);">Generate & Send Data</button>
+            <div id="sim-msg" style="margin-top: 10px; font-size: 0.875rem; display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        async function runSimulation() {
+            const btn = document.getElementById('sim-btn');
+            const msg = document.getElementById('sim-msg');
+            const stationId = document.getElementById('sim-station').value;
+            
+            if(!stationId) {
+                alert("Please enter a Station ID");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = "Generating...";
+            
+            try {
+                const res = await fetch('/api/simulate', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ station_id: stationId })
+                });
+                const result = await res.json();
+                
+                msg.style.display = 'block';
+                if(res.ok) {
+                    msg.style.color = 'var(--success)';
+                    msg.textContent = result.message;
+                } else {
+                    msg.style.color = 'var(--danger)';
+                    msg.textContent = result.message;
+                }
+            } catch (err) {
+                alert("Simulation failed");
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Generate & Send Data";
+                setTimeout(() => msg.style.display = 'none', 5000);
+            }
+        }
+        // Fetch real-time health data
+        setInterval(async () => {
+            try {
+                const res = await fetch('/api/status');
+                const data = await res.json();
+                document.getElementById('cpu-usage').textContent = data.cpu_percent + '%';
+                document.getElementById('mem-usage').textContent = data.memory_percent + '%';
+                document.getElementById('disk-usage').textContent = data.disk_percent + '%';
+                
+                const statusBadge = document.getElementById('agent-status');
+                if (data.agent_running) {
+                    statusBadge.textContent = 'Running';
+                    statusBadge.classList.remove('stopped');
+                } else {
+                    statusBadge.textContent = 'Stopped';
+                    statusBadge.classList.add('stopped');
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }, 5000);
+
+        // Save Config
+        async function saveConfig() {
+            const data = {
+                station_id: document.getElementById('cfg-station').value,
+                server_url: document.getElementById('cfg-url').value
+            };
+            try {
+                const res = await fetch('/api/config', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                if(res.ok) {
+                    const msg = document.getElementById('save-msg');
+                    msg.style.display = 'block';
+                    setTimeout(() => msg.style.display = 'none', 3000);
+                }
+            } catch (err) {
+                alert("Failed to save config");
+            }
+        }
+    </script>
+</body>
+</html>

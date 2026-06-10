@@ -1,0 +1,11 @@
+E2E Add UPT/Add Site on port 5002
+Status: SUCCESS
+
+Details:
+- Added UPT id: ai_e2e_01, username: ai_user_01
+- Created user directory: W:\SERVER COPY 2\userdata\ai_user_01
+- Added Site: site_ai_01
+- Created site directories: spectrum, wifi
+- Updated userdata.json and userdata-bak.json accordingly
+
+Timestamps: 2025-10-12

@@ -1,0 +1,397 @@
+{
+  "admin": {
+    "username": "admin",
+    "password": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a",
+    "salt": "",
+    "fullname": "System Administrator"
+  },
+  "upts": {
+    "01": {
+      "id_upt": "01",
+      "fullname": "Balai Monitor Spektrum Frekuensi Radio Kelas I DKI Jakarta",
+      "username": "jakarta",
+      "password": "b2488dd986e8cf1025a1d4658dcce3bbd845fdd15a7126ac9c4b24399fccad06",
+      "sites": [
+        {
+          "id_perangkat": "001",
+          "site_name": "jakarta",
+          "token": "dki"
+        },
+        {
+          "id_perangkat": "002",
+          "site_name": "kedua",
+          "token": "kedua"
+        },
+        {
+          "id_perangkat": "003",
+          "site_name": "ketiga",
+          "token": "ketiga"
+        }
+      ]
+    },
+    "10": {
+      "id_upt": "10",
+      "fullname": "Balai Monitor Spektrum Frekuensi Radio Kelas I Denpasar",
+      "username": "bali",
+      "password": "c0a46612b21b1d9ea3c212a9c8b40a90b7aa629dc36ab8f36cd9f31e40bc9ed6",
+      "sites": [
+        {
+          "id_perangkat": "001",
+          "site_name": "site_13-pertama",
+          "token": "site_13-pertama"
+        },
+        {
+          "id_perangkat": "002",
+          "site_name": "site_14-kedua",
+          "token": "site_14-kedua"
+        },
+        {
+          "id_perangkat": "003",
+          "site_name": "site_15-ketiga",
+          "token": "site_15-ketiga"
+        }
+      ]
+    },
+    "17": {
+      "id_upt": "17",
+      "fullname": "Balai Monitor Spektrum Frekuensi Radio Kelas II Manado",
+      "username": "manado",
+      "password": "89721f7a36a6e44336232934d130f9eccc112f636c6bc2d809931c4b4f27542c",
+      "sites": []
+    },
+    "02": {
+      "id_upt": "02",
+      "fullname": "Balai Monitor Spektrum Frekuensi Radio Kelas I Tangerang",
+      "username": "tangerang",
+      "password": "d90908f2202c2cbac3cd590cf3f0105337238d445a82d1025e6b5042ddf40201",
+      "salt": "1977c99d98f3f3cf5364f6c8686eee57",
+      "sites": []
+    },
+    "03": {
+      "id_upt": "03",
+      "fullname": "\tBalai Monitor Spektrum Frekuensi Radio Kelas I Medan",
+      "username": "medan",
+      "password": "a447f5cef622ea6090843970e3ccfec9535ed924e988850a7b140a0af8adbb11",
+      "salt": "d05f4d1f3fae0e169e66041a81ec2df0",
+      "sites": []
+    },
+    "04": {
+      "id_upt": "04",
+      "fullname": "Balai Monitor Spektrum Frekuensi Radio Kelas I Pekanbaru",
+      "username": "pekanbaru",
+      "password": "38e3d070ba682b4ea72a45683f5459b731f3497ccb9d5df2114efe26e22b80aa",
+      "salt": "e8fa76609b34168b31c97183d52a96f4",
+      "sites": []
+    },
+    "05": {
+      "id_upt": "05",
+      "fullname": "Balai Monitor Spektrum Frekuensi Radio Kelas I Palembang",
+      "username": "palembang",
+      "password": "95412d402ffdd52efd6f7446c1169fabdbfef817fa8e3152f5b70dc83257df34",
+      "salt": "e2610abee8db685b62752222cadb8f8c",
+      "sites": []
+    },
+    "06": {
+      "id_upt": "06",
+      "fullname": "\tBalai Monitor Spektrum Frekuensi Radio Kelas I Bandung",
+      "username": "bandung",
+      "password": "df64582eab4f615d7da57d00170a4f02a3323de8f2d4fe755e6bfbfec836f7d1",
+      "salt": "f4960cbd9681f952763cc8678fb9c46f",
+      "sites": []
+    },
+    "08": {
+      "id_upt": "08",
+      "fullname": "Balai Monitor Spektrum Frekuensi Radio Kelas I Surabaya",
+      "username": "surabaya",
+      "password": "f66f252ac830dce30dc474af7260d48c9c21fd7fe3babf7a9e75d88bfe54599e",
+      "salt": "e71d46791f89276b4d73e366baaaf73e",
+      "sites": [
+        {
+          "id_perangkat": "001",
+          "site_name": "site_29-sukodono",
+          "token": "site_29-sukodono"
+        }
+      ]
+    },
+    "09": {
+      "id_upt": "09",
+      "fullname": "\tBalai Monitor Spektrum Frekuensi Radio Kelas I Yogyakarta",
+      "username": "yogyakarta",
+      "password": "fa434aacffe2bed00acc6981c27074b28cf02aa28efa8e34e174936f46f2a30b",
+      "salt": "7753a2c92c51c8090cc724956ef8da93",
+      "sites": []
+    },
+    "11": {
+      "id_upt": "11",
+      "fullname": "\tBalai Monitor Spektrum Frekuensi Radio Kelas I Kupang",
+      "username": "kupang",
+      "password": "7c1658df369046be2083bc606e22c8c9ca8ad255a6abf2fe27578ffef3582381",
+      "salt": "cbc9d7c70be28af29ca10a2c4b45c1f1",
+      "sites": []
+    },
+    "12": {
+      "id_upt": "12",
+      "fullname": "Balai Monitor Spektrum Frekuensi Radio Kelas I Samarinda",
+      "username": "samarinda",
+      "password": "566d6de06740a07a5e3ae8420af1d64c7bcff8869058e40289fa46b8adcf57e8",
+      "salt": "c9b0db45c8a857b051bf21ff7abe3cf0",
+      "sites": []
+    },
+    "13": {
+      "id_upt": "13",
+      "fullname": "Balai Monitor Spektrum Frekuensi Radio Kelas I Makassar",
+      "username": "makassar",
+      "password": "c12d35ac2a0388ab86636ff69f92c4f16729f9c7592f694a4c24ccea0a68569d",
+      "salt": "773ed04a6652de87a266f1b750c81294",
+      "sites": [
+        {
+          "id_perangkat": "001",
+          "site_name": "site_18-sidrap",
+          "token": "site_18-sidrap"
+        },
+        {
+          "id_perangkat": "002",
+          "site_name": "site_17",
+          "token": "site_17"
+        },
+        {
+          "id_perangkat": "003",
+          "site_name": "site_16",
+          "token": "site_16"
+        }
+      ]
+    },
+    "14": {
+      "id_upt": "14",
+      "fullname": "Balai Monitor Spektrum Frekuensi Radio Kelas II Aceh",
+      "username": "aceh",
+      "password": "d79bebd6827c0203d05454061ae40ffca244da27a927d38d9f8dae52d89629ef",
+      "salt": "34544c31cfee62f13c4dd01647db68ea",
+      "sites": []
+    },
+    "15": {
+      "id_upt": "15",
+      "fullname": "Balai Monitor Spektrum Frekuensi Radio Kelas II Batam",
+      "username": "batam",
+      "password": "f7b15845522bb55d2935cdfc016c5f514a673560d00598de87b22bddd94b9478",
+      "salt": "6588de27878f7c00999bc028032c77d1",
+      "sites": []
+    },
+    "16": {
+      "id_upt": "16",
+      "fullname": "\tBalai Monitor Spektrum Frekuensi Radio Kelas II Pontianak",
+      "username": "pontianak",
+      "password": "2d748e540825412e823ad959863613c8483e2caacd4c455febe654938928c84e",
+      "salt": "4652d14e473942dab7a203468f89bf67",
+      "sites": []
+    },
+    "18": {
+      "id_upt": "18",
+      "fullname": "Balai Monitor Spektrum Frekuensi Radio Kelas II Jayapura",
+      "username": "jayapura",
+      "password": "7942ea8a6c715db694edbf2ceb01c1ed04a2f98b352a7b456301d3deeddd5706",
+      "salt": "c34a37e80521446677dbb71d9ee4ed4f",
+      "sites": []
+    },
+    "19": {
+      "id_upt": "19",
+      "fullname": "Balai Monitor Spektrum Frekuensi Radio Kelas II Merauke",
+      "username": "merauke",
+      "password": "d3ba1223a39abfee47a2027d1478dc0f8445fbcbeed9342b96d6a755baa4255e",
+      "salt": "af1baf2be7f2cf36358dbd485431da4c",
+      "sites": []
+    },
+    "20": {
+      "id_upt": "20",
+      "fullname": "Balai Monitor Spektrum Frekuensi Radio Kelas II Padang",
+      "username": "padang",
+      "password": "80d36fd68563b67f4a80a8ee6a095a5f249fc96367670353fc4dcea726e4846e",
+      "salt": "6e791c514eaf961686b64c895667fc42",
+      "sites": []
+    },
+    "21": {
+      "id_upt": "21",
+      "fullname": "Balai Monitor Spektrum Frekuensi Radio Kelas II Jambi",
+      "username": "jambi",
+      "password": "faf6ec26aeecdd16c77e0cc0a95357a67e7ea25f05fd355921978d0de0fc5baa",
+      "salt": "66413f99e419d097371a5ee2cfc3701f",
+      "sites": []
+    },
+    "22": {
+      "id_upt": "22",
+      "fullname": "Balai Monitor Spektrum Frekuensi Radio Kelas II Bengkulu",
+      "username": "bengkulu",
+      "password": "ecba29dc78acdacf75b38f1ca0f9165a20145119cd2b7a4b05eb03cb8347002c",
+      "salt": "fa9672e30a253252bcbe3173dae51545",
+      "sites": []
+    },
+    "23": {
+      "id_upt": "23",
+      "fullname": "Balai Monitor Spektrum Frekuensi Radio Kelas II Lampung",
+      "username": "lampung",
+      "password": "765e921526499912d094cf402b8b33b0a6860af6c3159f7a41808a06ca87d66c",
+      "salt": "3c3ad36d65aa302e4f13bf89eb487560",
+      "sites": []
+    },
+    "24": {
+      "id_upt": "24",
+      "fullname": "\tBalai Monitor Spektrum Frekuensi Radio Kelas II Banjarmasin",
+      "username": "banjarmasin",
+      "password": "65824b84153343803ec7715b9307d4b5f4e194d986c90bbe19379be707f7e254",
+      "salt": "cf26d8bf8403e5d1eff17e51cb96f791",
+      "sites": []
+    },
+    "25": {
+      "id_upt": "25",
+      "fullname": "\tBalai Monitor Spektrum Frekuensi Radio Kelas II Palangkaraya",
+      "username": "palangkaraya",
+      "password": "d4094394ddeb0f28dbeb1096d86ea89a0f9bf3a968f749a41e6943a687f98a16",
+      "salt": "7e40f44e1fa1a8cf7172c6ae554a9f5b",
+      "sites": []
+    },
+    "26": {
+      "id_upt": "26",
+      "fullname": "Balai Monitor Spektrum Frekuensi Radio Kelas II Mataram",
+      "username": "mataram",
+      "password": "5a9c54d6f8c33483e8a2bd14c987cd88e33b910472fd9aa40fbe5e4e45cb0908",
+      "salt": "4ab98757d5a3391c9343eff6c859e672",
+      "sites": []
+    },
+    "27": {
+      "id_upt": "27",
+      "fullname": "Balai Monitor Spektrum Frekuensi Radio Kelas II Palu",
+      "username": "palu",
+      "password": "4a9dc80287f49d3a1f68c33ecceaa8e6aee7bcf4867690ebda9cc86396e9c6e9",
+      "salt": "9ded11375f11a9ba4a3467c33b32fefe",
+      "sites": []
+    },
+    "28": {
+      "id_upt": "28",
+      "fullname": "Loka Monitor Spektrum Frekuensi Radio Kendari",
+      "username": "kendari",
+      "password": "0e5538d9ccdb0e545591180c5fefdf4392549709ea3df6a6c5e77b3a4bf3b7c5",
+      "salt": "3f7680886ba2ad39e89b52622855d6f5",
+      "sites": [
+        {
+          "id_perangkat": "001",
+          "site_name": "site_25-Bandara Sangia",
+          "token": "site_25-Bandara Sangia"
+        },
+        {
+          "id_perangkat": "002",
+          "site_name": "site_27-Routa Konawe",
+          "token": "site_27-Routa Konawe"
+        },
+        {
+          "id_perangkat": "003",
+          "site_name": "site_28-Langgikima Konut",
+          "token": "site_28-Langgikima Konut"
+        }
+      ]
+    },
+    "29": {
+      "id_upt": "29",
+      "fullname": "Loka Monitor Spektrum Frekuensi Radio Ambon",
+      "username": "ambon",
+      "password": "1ebc3a42883d1a073449ae3d53c411e4fd736dcbb5d2c1c3372b4bb3c232e671",
+      "salt": "0cccc3cbee8a939fc1866531b28c91c3",
+      "sites": [
+        {
+          "id_perangkat": "001",
+          "site_name": "site_26-ambon",
+          "token": "upt_26-ambon"
+        }
+      ]
+    },
+    "30": {
+      "id_upt": "30",
+      "fullname": "\tLoka Monitor Spektrum Frekuensi Radio Ternate",
+      "username": "ternate",
+      "password": "9d794f52600ab8461f714fa9a296a21e21174dcc6bbfabb11a18453b04a599fe",
+      "salt": "ac6267c8a635ac53c160a0b713259741",
+      "sites": []
+    },
+    "31": {
+      "id_upt": "31",
+      "fullname": "\tLoka Monitor Spektrum Frekuensi Radio Pangkal Pinang",
+      "username": "pangkalpinang",
+      "password": "89b6554fd9ab97fb667c394ddbf56371560addc1f669c138c62aa6ff2667f405",
+      "salt": "d0d20677c8a8619636135ff46ef315a4",
+      "sites": []
+    },
+    "32": {
+      "id_upt": "32",
+      "fullname": "Loka Monitor Spektrum Frekuensi Radio Gorontalo",
+      "username": "gorontalo",
+      "password": "d2d1e44443c59b0f41f318cf2e2daeb1d1d42c275e89ed8aadb956cf2ff4739a",
+      "salt": "6374b1fee410a95eb6185c42f7d2dd91",
+      "sites": []
+    },
+    "33": {
+      "id_upt": "33",
+      "fullname": "Loka Monitor Spektrum Frekuensi Radio Mamuju",
+      "username": "mamuju",
+      "password": "8ba857896801fbcc98adca084d9685b67331ef416989b26046dde845399f00d0",
+      "salt": "dc99546edcafce579eaf3b189ee51a99",
+      "sites": [
+        {
+          "id_perangkat": "001",
+          "site_name": "site_36-mamuju",
+          "token": "site_36-mamuju"
+        }
+      ]
+    },
+    "34": {
+      "id_upt": "34",
+      "fullname": "Loka Monitor Spektrum Frekuensi Radio Manokwari",
+      "username": "manokwari",
+      "password": "1091b76191f4898ed918863908bc87695b3196571342e87e3cc0610f3bf78594",
+      "salt": "67658817e723f40c753865ee68d7d2e8",
+      "sites": []
+    },
+    "35": {
+      "id_upt": "35",
+      "fullname": "\tLoka Monitor Spektrum Frekuensi Radio Tanjung Selor",
+      "username": "tanjungselor",
+      "password": "96fe9a09ed95a418cdf7f5a2e01b3afcb44c07979f53654953111f1452b82664",
+      "salt": "686ada7cebd6d0da569e665a99378e92",
+      "sites": []
+    },
+    "07": {
+      "id_upt": "07",
+      "fullname": "Balai Monitor Spektrum Frekuensi Radio Kelas I Semarang",
+      "username": "semarang",
+      "password": "2c03db47b58cd70c75e03bca85ca859fb067835f05323375f5b1b11d92793532",
+      "salt": "9c6d06925360177f0ac3e336beb64330",
+      "sites": [
+        {
+          "id_perangkat": "001",
+          "site_name": "plamongan indah",
+          "token": "plamongan_test"
+        },
+        {
+          "id_perangkat": "002",
+          "site_name": "site_12-semarang indah",
+          "token": "site_12-semarang indah"
+        },
+        {
+          "id_perangkat": "003",
+          "site_name": "site_11-colo",
+          "token": "site_11-colo"
+        },
+        {
+          "id_perangkat": "004",
+          "site_name": "site_9-sokaraja",
+          "token": "site_9-sokaraja"
+        }
+      ]
+    },
+    "uiuiaa demo demo": {
+      "username": "ini adalah contoh file test",
+      "fullname": "demo demo demo",
+      "password": "",
+      "salt": "",
+      "sites": []
+    }
+  }
+}

@@ -1,0 +1,205 @@
+{% set current_endpoint = request.endpoint %}
+{% set uname = session.get('username') or 'User' %}
+{% set user_data = session.get('user_data') or {} %}
+{% set uname_norm = (uname or '')|lower %}
+{% set is_admin = (uname_norm == 'admin') and (user_data.get('is_admin') == True) %}
+{% set display_name = ('ADMIN' if is_admin else (user_data.get('fullname') or uname))|trim %}
+{% set initials_src = (display_name|replace(' ', '')) %}
+{% set initials = initials_src[:2].upper() if initials_src else 'US' %}
+
+<!-- CUSTOM DROPDOWN CSS -->
+<!-- Removed inline style, now in modern-ui.css -->
+
+<div class="monsfer-header-wrapper">
+    <!-- Top Row -->
+    <div class="header-top">
+        <div class="header-left">
+            <!-- Brand -->
+            <a href="{{ url_for('monitoring') }}" class="brand-section" style="text-decoration: none;">
+                <div class="brand-icon">
+                    <i class="bi bi-broadcast"></i>
+                </div>
+                <div class="brand-info">
+                    <div class="brand-title">SDR Monitoring</div>
+                    <div class="brand-subtitle">{{ display_name }}</div>
+                </div>
+            </a>
+
+            <!-- Site Selector (Custom Dropdown) -->
+            <div class="brand-site-wrapper site-selector" style="position: relative;">
+                <span class="site-label">Site:</span>
+                <div class="brand-site-btn site-dropdown-btn" id="siteDropdownBtn" onclick="toggleSiteDropdown(event)">
+                    <span id="currentSiteLabel" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;">{{ session.get('current_site') or 'Plamongan Indah' }}</span>
+                    <i class="bi bi-chevron-down" style="font-size: 10px;"></i>
+                </div>
+                
+                <!-- Custom Dropdown Menu -->
+                <div class="dropdown-menu-custom" id="siteDropdownMenu">
+                    {% raw %}
+                    <div v-for="site in sites" 
+                         :key="site.site_name" 
+                         class="dropdown-item-custom" 
+                         @click="selectSite(site)">
+                        {{ site.display_name }}
+                    </div>
+                    {% endraw %}
+                </div>
+            </div>
+        </div>
+
+        <div class="header-right">
+            {% if current_endpoint == 'monitoring' %}
+            {% raw %}
+            <button type="button" class="theme-toggle" @click="toggleLeftSidebar" :aria-pressed="(!isLeftSidebarOpen).toString()" :aria-label="isLeftSidebarOpen ? 'Hide filter sidebar' : 'Show filter sidebar'" title="Toggle Filter Sidebar">
+                <i class="bi" :class="isLeftSidebarOpen ? 'bi-layout-sidebar-inset' : 'bi-layout-sidebar-inset-reverse'" aria-hidden="true"></i>
+            </button>
+            {% endraw %}
+            {% endif %}
+            <!-- Theme Toggle -->
+            <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+                <i class="bi bi-sun" id="themeIcon"></i>
+            </button>
+            
+            <!-- User Profile -->
+            <div class="user-profile" {% if is_admin %}onclick="window.location.href='{{ url_for('upt_management') }}'"{% else %}style="cursor: default;"{% endif %}>
+                <div class="avatar-circle">{{ initials }}</div>
+                <span class="user-info-text">{{ display_name }}</span>
+                {% if is_admin %}
+                <i class="bi bi-chevron-down text-muted" style="font-size: 10px;"></i>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Row (Navigation) -->
+    <nav class="header-nav" style="height: var(--header-nav-height);">
+        <a href="{{ url_for('monitoring') }}" class="main-nav-link {% if current_endpoint == 'monitoring' %}active{% endif %}">
+            <i class="bi bi-broadcast"></i> Monitoring
+        </a>
+        <a href="{{ url_for('wifi') }}" class="main-nav-link {% if current_endpoint == 'wifi' %}active{% endif %}">
+            <i class="bi bi-wifi"></i> WiFi
+        </a>
+        <a href="{{ url_for('system_info') }}" class="main-nav-link {% if current_endpoint == 'system_info' %}active{% endif %}">
+            <i class="bi bi-cpu"></i> System Info
+        </a>
+        <a href="{{ url_for('settings') }}" class="main-nav-link {% if current_endpoint == 'settings' %}active{% endif %}">
+            <i class="bi bi-gear"></i> Settings
+        </a>
+        {% if is_admin %}
+        <a href="{{ url_for('upt_management') }}" class="main-nav-link {% if current_endpoint == 'upt_management' %}active{% endif %}">
+            <i class="bi bi-people"></i> User Management
+        </a>
+        {% endif %}
+        
+        <a href="{{ url_for('logout') }}" class="main-nav-link nav-logout">
+            <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+    </nav>
+</div>
+
+<!-- Scripts for Header Functionality -->
+<script>
+    function toggleSiteDropdown(event) {
+        if (event) {
+            event.stopPropagation();
+        }
+        const menu = document.getElementById('siteDropdownMenu');
+        const btn = document.getElementById('siteDropdownBtn');
+        const isShowing = menu.classList.contains('show');
+
+        // Toggle state
+        if (isShowing) {
+            closeDropdown();
+        } else {
+            openDropdown();
+        }
+
+        function openDropdown() {
+            menu.classList.add('show');
+            document.addEventListener('click', handleOutsideClick);
+        }
+
+        function closeDropdown() {
+            menu.classList.remove('show');
+            document.removeEventListener('click', handleOutsideClick);
+        }
+
+        function handleOutsideClick(e) {
+            // Close if clicking outside the wrapper
+            if (!e.target.closest('.site-selector')) {
+                closeDropdown();
+            }
+        }
+    }
+
+    function selectSite(siteName) {
+        // Dispatch event for Vue or other listeners
+        const event = new CustomEvent('external-site-selected', { detail: { siteName: siteName } });
+        window.dispatchEvent(event);
+        
+        // Update UI
+        const label = document.getElementById('currentSiteLabel');
+        if (label) label.innerText = siteName;
+        
+        // Update Legacy/Hidden Select for Vue v-model compatibility
+        const select = document.getElementById('siteSelector');
+        if (select) {
+            select.value = siteName;
+            select.dispatchEvent(new Event('change'));
+            select.dispatchEvent(new Event('input'));
+        }
+
+        // Close dropdown
+        const menu = document.getElementById('siteDropdownMenu');
+        if (menu) {
+            menu.classList.remove('show');
+        }
+    }
+
+    function toggleTheme() {
+        const html = document.documentElement;
+        const current = html.getAttribute('data-theme');
+        const next = current === 'light' ? 'dark' : 'light';
+        
+        html.setAttribute('data-theme', next);
+        localStorage.setItem('monsfer_theme', next);
+        
+        // Update Icon
+        const icon = document.getElementById('themeIcon');
+        if (next === 'light') {
+            icon.classList.remove('bi-sun');
+            icon.classList.add('bi-moon');
+        } else {
+            icon.classList.remove('bi-moon');
+            icon.classList.add('bi-sun');
+        }
+    }
+    
+    // Initialize Theme Icon
+    document.addEventListener('DOMContentLoaded', () => {
+        const theme = localStorage.getItem('monsfer_theme') || 'dark';
+        const html = document.documentElement;
+        html.setAttribute('data-theme', theme); // Ensure attribute is set on load
+
+        const icon = document.getElementById('themeIcon');
+        if (theme === 'light') {
+            icon.classList.remove('bi-sun');
+            icon.classList.add('bi-moon');
+        } else {
+            icon.classList.remove('bi-moon');
+            icon.classList.add('bi-sun');
+        }
+    });
+</script>
+
+<!-- Keep Hidden Vue Select for compatibility if needed, but primary interaction is now Custom Dropdown -->
+<div style="display: none;">
+    <select id="siteSelector" v-model="currentSiteName" @change="onSiteNameChange">
+        <option value="" disabled>Select Site</option>
+        {% raw %}
+        <option v-for="site in sites" :key="site.site_name" :value="site.site_name">
+            {{ site.display_name }}
+        </option>
+        {% endraw %}
+    </select>
+</div>

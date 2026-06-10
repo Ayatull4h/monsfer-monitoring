@@ -1,0 +1,600 @@
+{% extends "layout.html" %}
+
+{# Override sidebar container to remove default global sidebar #}
+{% block sidebar_container %}{% endblock %}
+
+{% block content %}
+<style>
+    /* =========================================
+       1. THEME VARIABLES (Strict Light Mode)
+       ========================================= */
+    :root {
+        /* Palette */
+        --bg-app: #f1f5f9;       /* Slate 100 - Main App Background */
+        --bg-panel: #ffffff;     /* White - Cards/Panels */
+        --bg-hover: #f8fafc;     /* Slate 50 - Hover States */
+        --bg-active: #eff6ff;    /* Blue 50 - Active States */
+        
+        --border-color: #e2e8f0; /* Slate 200 - Borders */
+        
+        --text-main: #0f172a;    /* Slate 900 - Primary Text */
+        --text-sec: #64748b;     /* Slate 500 - Secondary Text */
+        --text-muted: #94a3b8;   /* Slate 400 - Muted/Disabled */
+        
+        --primary: #2563eb;      /* Blue 600 - Primary Action */
+        --danger: #ef4444;       /* Red 500 - Errors/Delete */
+        
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --radius-md: 8px;
+    }
+
+    /* Force overrides for any external dark mode leaks */
+    html, body {
+        background-color: var(--bg-app) !important;
+        color: var(--text-main) !important;
+    }
+
+    /* =========================================
+       2. LAYOUT RESET & STRUCTURE
+       ========================================= */
+    /* Remove default template constraints */
+    .has-sidebar .content-container {
+        margin-right: 0 !important;
+        width: 100% !important;
+        max-width: 100vw !important;
+        padding: 0 !important;
+    }
+    
+    .app-shell {
+        height: 100vh !important;
+        overflow: hidden !important;
+    }
+
+    /* Main Layout Grid */
+    .monitoring-layout-wrapper {
+        display: flex;
+        gap: 0;
+        padding: 0;
+        height: calc(100vh - var(--app-topbar-height, 64px));
+        background-color: var(--bg-app);
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* =========================================
+       3. COMPONENT: PANELS & CARDS
+       ========================================= */
+    .glass-card {
+        background: var(--bg-panel);
+        /* border: 1px solid var(--border-color); */ /* Removed border for seamless look */
+        /* border-radius: var(--radius-md); */ /* Removed radius for seamless look */
+        /* box-shadow: var(--shadow-sm); */
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        height: 100%;
+    }
+
+    /* Headers */
+    .panel-header, .sidebar-header {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border-color);
+        background: var(--bg-panel);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-shrink: 0;
+        height: 50px; /* Fixed height for consistency */
+    }
+
+    .header-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-main);
+    }
+
+    /* =========================================
+       4. LEFT SIDEBAR (Data & Subservice)
+       ========================================= */
+    .left-sidebar-container {
+        width: 320px;
+        height: 100%;
+        transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border-right: 1px solid var(--border-color);
+        background: var(--bg-panel);
+        z-index: 20;
+        flex-shrink: 0;
+    }
+    
+    .left-sidebar-container.collapsed {
+        margin-left: -320px;
+    }
+    
+    .left-sidebar {
+        height: 100%;
+    }
+
+    .date-navigator {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        border-bottom: 1px solid var(--border-color);
+        background: var(--bg-hover);
+    }
+
+    .split-list-view {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+    }
+
+    /* Column 1: Time/Data (Narrow) */
+    .col-time {
+        width: 100px;
+        border-right: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+        background: var(--bg-panel);
+    }
+
+    /* Column 2: Subservices (Fluid) */
+    .col-main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: var(--bg-panel);
+        min-width: 0;
+    }
+
+    .col-header {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-sec);
+        padding: 8px 12px;
+        border-bottom: 1px solid var(--border-color);
+        background: var(--bg-hover);
+        font-weight: 600;
+    }
+
+    .scroll-list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0;
+    }
+
+    /* List Items */
+    .list-item {
+        cursor: pointer;
+        transition: all 0.2s;
+        border-bottom: 1px solid transparent;
+    }
+
+    .item-time {
+        padding: 8px 12px;
+        font-size: 13px;
+        color: var(--text-sec);
+        text-align: right;
+        border-right: 3px solid transparent;
+    }
+
+    .item-time:hover {
+        background: var(--bg-hover);
+        color: var(--text-main);
+    }
+
+    .item-time.active {
+        background: var(--bg-active);
+        color: var(--primary);
+        border-right-color: var(--primary);
+        font-weight: 600;
+    }
+
+    .item-service {
+        padding: 8px 12px;
+        border-left: 3px solid transparent;
+    }
+
+    .item-service:hover {
+        background: var(--bg-hover);
+    }
+
+    .item-service.active {
+        background: var(--bg-active);
+        border-left-color: var(--primary);
+    }
+
+    .svc-title {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text-main);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .item-service.active .svc-title {
+        color: var(--primary);
+        font-weight: 600;
+    }
+
+    .svc-meta {
+        font-size: 11px;
+        color: var(--text-sec);
+    }
+
+    /* =========================================
+       5. CENTER CONTENT (Charts)
+       ========================================= */
+    .center-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        overflow: hidden;
+        padding: 16px;
+        position: relative;
+        transition: all 0.3s;
+        background: var(--bg-app);
+    }
+
+    .chart-panel {
+        background: #fff;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .chart-panel.spectrum { flex: 0 0 50%; } /* Adjusted height */
+    .chart-panel.waterfall { flex: 1; }
+
+    .monitoring-chart {
+        flex: 1;
+        background: #fff;
+        position: relative;
+    }
+
+    /* Status Pills in Header */
+    .status-badge {
+        font-size: 11px;
+        padding: 2px 8px;
+        border-radius: 12px;
+        background: var(--bg-hover);
+        border: 1px solid var(--border-color);
+        color: var(--text-sec);
+    }
+
+    /* =========================================
+       6. RIGHT SIDEBAR (Options)
+       ========================================= */
+    .right-sidebar-container {
+        width: 280px;
+        height: 100%;
+        transition: margin-right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border-left: 1px solid var(--border-color);
+        background: var(--bg-panel);
+        z-index: 20;
+        flex-shrink: 0;
+    }
+    
+    .right-sidebar-container.collapsed {
+        margin-right: -280px;
+    }
+
+    .right-sidebar {
+        height: 100%;
+    }
+
+    .options-content {
+        padding: 16px;
+        overflow-y: auto;
+        height: calc(100% - 50px); /* Height minus header */
+    }
+
+    .control-group {
+        margin-bottom: 20px;
+    }
+
+    .control-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-main);
+        margin-bottom: 8px;
+        display: block;
+    }
+    
+    /* Header/* Header Toggle Buttons */
+    .btn-header-toggle {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        background: transparent;
+        color: var(--text-sec);
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-right: 8px;
+    }
+    
+    .btn-header-toggle:hover {
+        background: var(--bg-hover);
+        color: var(--primary);
+    }
+
+
+
+    /* Form Elements */
+    .form-select, .form-input {
+        width: 100%;
+        padding: 6px 10px;
+        font-size: 13px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        background: #fff;
+        color: var(--text-main);
+        transition: border-color 0.2s;
+    }
+
+    .form-select:focus, .form-input:focus {
+        border-color: var(--primary);
+        outline: none;
+    }
+
+    .checkbox-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .checkbox-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: var(--text-sec);
+        cursor: pointer;
+    }
+
+    .marker-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 6px 0;
+        border-bottom: 1px dashed var(--border-color);
+        font-size: 12px;
+    }
+    
+    /* Buttons */
+    .btn-sm-primary {
+        font-size: 11px;
+        padding: 4px 8px;
+        background: var(--bg-active);
+        color: var(--primary);
+        border: 1px solid transparent;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+    
+    .btn-sm-primary:hover {
+        background: var(--primary);
+        color: white;
+    }
+
+</style>
+
+{% raw %}
+<div class="monitoring-layout-wrapper">
+    <!-- 1. LEFT SIDEBAR CONTAINER -->
+    <div class="left-sidebar-container" :class="{ 'collapsed': !isLeftSidebarOpen }">
+        <div class="glass-card left-sidebar">
+            <div class="sidebar-header">
+                <span class="header-title">Data Explorer</span>
+                <button class="btn-icon d-md-none" @click="isLeftSidebarOpen = false"><i class="bi bi-x"></i></button>
+            </div>
+            
+            <!-- Date Navigation -->
+            <div class="date-navigator">
+                <button class="btn-icon" @click="prevDate"><i class="bi bi-chevron-left"></i></button>
+                <input type="date" class="form-input date-input" v-model="selectedDate" @change="applyFilter" style="text-align: center;">
+                <button class="btn-icon" @click="nextDate"><i class="bi bi-chevron-right"></i></button>
+            </div>
+            
+            <!-- Split View: Time List | Service List -->
+            <div class="split-list-view">
+                <!-- Col 1: Time Stamps -->
+                <div class="col-time">
+                    <div class="col-header">Time ({{ filteredData.length }})</div>
+                    <div class="scroll-list">
+                        <div v-for="item in filteredData" :key="item.filename" 
+                             class="list-item item-time" 
+                             :class="{ active: selectedDataFilename === item.filename }" 
+                             @click="selectLog(item)">
+                            {{ item.display_time || item.time }}
+                        </div>
+                        <div v-if="filteredData.length === 0" class="empty-state">No Data</div>
+                    </div>
+                </div>
+                
+                <!-- Col 2: Subservices -->
+                <div class="col-main">
+                    <div class="col-header">Subservices ({{ subservices.length }})</div>
+                    <div class="scroll-list">
+                        <div v-for="svc in subservices" :key="svc.band_number" 
+                             class="list-item item-service" 
+                             :class="{ active: selectedSubservice === svc.band_number }" 
+                             @click="showSpectrum(svc)">
+                            <div class="svc-title">{{ svc.name || ('Subservice ' + svc.band_number) }}</div>
+                            <div class="svc-meta">{{ Number(svc.start_freq).toFixed(0) }}-{{ Number(svc.stop_freq).toFixed(0) }} MHz</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. CENTER CONTENT: Visualizations -->
+    <div class="center-content">
+        
+
+        <!-- Spectrum Chart Panel -->
+        <div class="chart-panel spectrum">
+            <div class="panel-header">
+                <div class="header-left" style="margin-left: 24px;"> <!-- Added margin for toggle button space -->
+                    <div class="header-title">Spectrum Analysis</div>
+                    <div class="d-flex gap-2 mt-1">
+                        <span class="status-badge" v-if="selectedSubserviceInfo">
+                            {{ selectedSubserviceInfo.name || ('Subservice ' + selectedSubserviceInfo.band_number) }}
+                        </span>
+                        <span class="status-badge" v-if="selectedDataInfo">
+                            {{ selectedDataInfo.display_time || selectedDataInfo.time }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div id="spectrumChart" class="monitoring-chart"></div>
+        </div>
+
+        <!-- Waterfall Chart Panel -->
+        <div class="chart-panel waterfall" v-show="viewMode !== 'spectrum'">
+             <div class="panel-header" style="min-height: 40px; padding: 8px 16px;">
+                <span class="header-title" style="font-size: 12px;">Waterfall History</span>
+            </div>
+            <div id="waterfallChart" class="monitoring-chart"></div>
+        </div>
+    </div>
+
+    <!-- 3. RIGHT SIDEBAR CONTAINER -->
+    <div class="right-sidebar-container" :class="{ 'collapsed': !isRightSidebarOpen }">
+        <div class="glass-card right-sidebar">
+            <div class="sidebar-header">
+                <span class="header-title">Settings</span>
+                <button class="btn-icon d-md-none" @click="isRightSidebarOpen = false"><i class="bi bi-x"></i></button>
+            </div>
+            
+            <div class="options-content">
+                <!-- View Mode -->
+                <div class="control-group">
+                    <label class="control-label">View Mode</label>
+                    <select class="form-select" v-model="viewMode" @change="fetchData">
+                        <option value="spectrum_waterfall">Split View</option>
+                        <option value="spectrum">Spectrum Only</option>
+                        <option value="spectrum_3d">3D Waterfall</option>
+                    </select>
+                </div>
+
+                <!-- Time Range -->
+                <div class="control-group">
+                    <label class="control-label">Time Window</label>
+                    <select class="form-select" v-model="timeRangeMode" @change="applyFilter">
+                        <option value="1h">Last 1 Hour</option>
+                        <option value="6h">Last 6 Hours</option>
+                        <option value="12h">Last 12 Hours</option>
+                        <option value="24h">Last 24 Hours</option>
+                    </select>
+                </div>
+
+                <!-- Toggles -->
+                <div class="control-group">
+                    <label class="control-label">Display</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item">
+                            <input type="checkbox" v-model="showGrid" @change="updateChartConfig"> Show Grid
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" v-model="showMarkers" @change="updateChartConfig"> Show Markers
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" v-model="autoScale" @change="updateChartConfig"> Auto Scale
+                        </label>
+                    </div>
+                </div>
+                
+                <hr style="border-top: 1px solid var(--border-color); margin: 16px 0;">
+                
+                <!-- Scale Settings -->
+                <div class="control-group">
+                    <label class="control-label">Signal Threshold (dBm)</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <input type="number" class="form-input" v-model.number="fixedLowerScale" placeholder="Min">
+                        <input type="number" class="form-input" v-model.number="fixedUpperScale" placeholder="Max">
+                    </div>
+                </div>
+
+                <!-- Markers -->
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <label class="control-label mb-0">Markers</label>
+                    <button class="btn-sm-primary" @click="addMarkerManual">+ Add</button>
+                </div>
+                
+                <div style="max-height: 150px; overflow-y: auto;">
+                    <div v-for="(marker, index) in markers" :key="index" class="marker-row">
+                        <input type="number" class="form-input py-0 px-1" style="width: 70px; font-size: 11px; height: 24px;" v-model.lazy="marker.frequency" @change="updateChartMarkers">
+                        <span style="font-size: 11px; color: var(--text-main);">{{ Number(marker.power).toFixed(1) }}</span>
+                        <i class="bi bi-x text-danger" style="cursor: pointer;" @click="removeMarker(index)"></i>
+                    </div>
+                    <div v-if="markers.length === 0" class="text-center text-muted" style="font-size: 11px; padding: 8px;">
+                        No markers active
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endraw %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/components/echarts.js') }}"></script>
+<script>
+    // Initialize mixin safely
+    window.pageMixin = window.pageMixin || {};
+    
+    // Extend the existing data function
+    const originalData = window.pageMixin.data || function() { return {}; };
+    window.pageMixin.data = function() {
+        const data = originalData.call(this);
+        return {
+            ...data,
+            sites: [],
+            currentSiteName: '',
+            isLeftSidebarOpen: true,
+            isRightSidebarOpen: true
+        };
+    };
+    
+    // Extend methods
+    window.pageMixin.methods = window.pageMixin.methods || {};
+    
+    window.pageMixin.methods.toggleLeftSidebar = function() {
+        this.isLeftSidebarOpen = !this.isLeftSidebarOpen;
+        this.handleResize();
+    };
+    
+    window.pageMixin.methods.toggleRightSidebar = function() {
+        this.isRightSidebarOpen = !this.isRightSidebarOpen;
+        this.handleResize();
+    };
+    
+    window.pageMixin.methods.handleResize = function() {
+        // Debounce resize to allow transition to complete
+        setTimeout(() => {
+            if (this.spectrumChartInstance) this.spectrumChartInstance.resize();
+            if (this.waterfallChartInstance) this.waterfallChartInstance.resize();
+            // Also try global instances if mapped differently
+            if (window.echartsInstanceSpectrum) window.echartsInstanceSpectrum.resize();
+            if (window.echartsInstanceWaterfall) window.echartsInstanceWaterfall.resize();
+        }, 350); 
+    };
+
+    console.log('Page mixin initialized for monitoring page');
+</script>
+{% endblock %}

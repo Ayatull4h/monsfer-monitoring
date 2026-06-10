@@ -1,0 +1,6 @@
+date;time;bssid;frequency;signal;ssid;vendor
+2026-05-12;20:11:02;00:11:22:33:44:12;5745;-54;Simulated_WiFi_0;VendorX
+2026-05-12;20:11:02;00:11:22:33:44:23;5745;-50;Simulated_WiFi_1;VendorX
+2026-05-12;20:11:02;00:11:22:33:44:56;5180;-81;Simulated_WiFi_2;VendorX
+2026-05-12;20:11:02;00:11:22:33:44:37;5745;-75;Simulated_WiFi_3;VendorX
+2026-05-12;20:11:02;00:11:22:33:44:20;5180;-55;Simulated_WiFi_4;VendorX

@@ -1,0 +1,451 @@
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.main-wrapper {
+    display: flex;
+    min-height: calc(100vh - 60px);
+    position: relative;
+    background-color: var(--bg-body);
+    overflow-y: auto;
+}
+
+.sidebar {
+    max-width: 300px;
+    min-width: 300px;
+    height: 100%;
+    position: relative;
+    border-right: 1px solid var(--border-color);
+    order: 3;
+    transition: all 0.3s ease;
+    overflow: visible;
+}
+
+.sidebar.collapsed {
+    width: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.wifi-container {
+    flex: 1;
+    padding: 20px;
+    /* margin-left: 280px; */
+    transition: all 0.3s ease;
+}
+
+.sidebar.collapsed + .wifi-container {
+    margin-left: 0;
+}
+
+.toggle-btn {
+    position: absolute;
+    left: -25px;
+    top: 0;
+    width: 25px;
+    height: 42px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px 0 0 4px;
+    color: white;
+    background-color: #2196f3;
+    border: 1px solid #1a7bc8;
+    cursor: pointer;
+    /* z-index: 1000; */
+    transition: all 0.3s ease;
+    box-shadow: -2px 0 4px rgba(0,0,0,0.1);
+}
+
+.toggle-btn.collapsed {
+    left: -1;
+}
+
+.toggle-btn:hover {
+    background-color: var(--bg-panel);
+}
+
+.card {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border: none;
+    margin-bottom: 20px;
+}
+
+.card-header {
+    background-color: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    padding: 15px 20px;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.chart-container {
+    width: 100%;
+    height: 400px;
+    margin-bottom: 20px;
+    transition: width 0.3s ease;
+}
+
+.chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.sidebar-collapsed .chart-container {
+    width: calc(100% - 60px);
+    margin-left: 60px;
+}
+
+.sidebar-expanded .chart-container {
+    width: calc(100% - 250px);
+    margin-left: 250px;
+}
+
+@media (max-width: 768px) {
+    .chart-container {
+        height: 300px;
+        width: 100% !important;
+        margin-left: 0 !important;
+    }
+    
+    .sidebar-collapsed .chart-container,
+    .sidebar-expanded .chart-container {
+        width: 100% !important;
+        margin-left: 0 !important;
+    }
+}
+
+.list-group-item {
+    border-left: none;
+    border-right: none;
+    padding: 12px 20px;
+}
+
+.list-group-item:first-child {
+    border-top: none;
+}
+
+.list-group-item:last-child {
+    border-bottom: none;
+}
+
+.refresh-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+}
+
+.refresh-btn:hover {
+    background-color: #0056b3;
+    transform: scale(1.1);
+}
+
+.refresh-btn i {
+    font-size: 1.5rem;
+}
+
+.input-group {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.input-group-text {
+    background-color: var(--bg-card);
+    border-right: none;
+}
+
+.form-control {
+    border-left: none;
+}
+
+.form-control:focus {
+    box-shadow: none;
+    border-color: var(--border-color);
+}
+
+.btn-outline-primary {
+    border-width: 1px;
+    transition: all 0.2s ease;
+}
+
+.btn-outline-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.badge {
+    padding: 5px 10px;
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        position: fixed;
+        left: -100%;
+    }
+    
+    .sidebar.show {
+        left: 0;
+    }
+    
+    .wifi-container {
+        margin-left: 0;
+        padding: 15px;
+    }
+    
+    .toggle-btn {
+        display: none;
+    }
+    
+    .chart-container {
+        height: 250px;
+    }
+}
+
+.signal-strength {
+    font-size: 1.2rem;
+}
+
+.signal-excellent { color: #28a745; }
+.signal-good { color: #17a2b8; }
+.signal-fair { color: #ffc107; }
+.signal-poor { color: #dc3545; }
+
+/* Status Cards */
+.status-card {
+    text-align: center;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: var(--bg-card);
+    transition: all 0.3s ease;
+}
+
+.status-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.status-card i {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: #007bff;
+}
+
+.status-card h6 {
+    margin: 5px 0;
+    color: var(--text-secondary);
+}
+
+.status-card span {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--text-primary);
+}
+
+/* Network Table */
+.table-responsive {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.table th {
+    position: sticky;
+    top: 0;
+    background-color: var(--bg-card);
+    z-index: 1;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+.network-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.network-actions button {
+    padding: 2px 8px;
+    font-size: 0.875rem;
+}
+
+/* Signal Map */
+#signalMap {
+    height: 400px;
+    background-color: var(--bg-card);
+    border-radius: 8px;
+}
+
+/* Status Indicators */
+.status-indicators {
+    display: flex;
+    gap: 10px;
+}
+
+.status-indicators .badge {
+    font-size: 0.875rem;
+    padding: 5px 10px;
+}
+
+/* Scanner Controls */
+#startScan, #stopScan {
+    width: 100%;
+    padding: 10px;
+}
+
+#startScan {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+#stopScan {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+/* Filter Options */
+.form-check {
+    margin-bottom: 8px;
+}
+
+.form-check-input:checked {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+/* Network Details Modal */
+.modal-body {
+    padding: 20px;
+}
+
+.network-details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.network-detail-item {
+    padding: 10px;
+    background-color: var(--bg-panel);
+    border-radius: 4px;
+}
+
+.network-detail-item label {
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 5px;
+}
+
+.network-detail-item span {
+    display: block;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+}
+
+/* Signal Strength Indicators */
+.signal-strength-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.signal-bars {
+    display: flex;
+    gap: 2px;
+}
+
+.signal-bar {
+    width: 4px;
+    height: 12px;
+    background-color: var(--border-color);
+    border-radius: 1px;
+}
+
+.signal-bar.active {
+    background-color: #28a745;
+}
+
+.signal-bar.active.warning {
+    background-color: #ffc107;
+}
+
+.signal-bar.active.danger {
+    background-color: #dc3545;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .status-card {
+        margin-bottom: 15px;
+    }
+    
+    .network-details-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .table-responsive {
+        max-height: 300px;
+    }
+}
+
+/* Animation for Refresh Button */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.refresh-btn.spinning i {
+    animation: spin 1s linear infinite;
+}
+
+/* Export Button Styles */
+#exportNetworks {
+    position: relative;
+    overflow: hidden;
+}
+
+#exportNetworks::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+}
+
+#exportNetworks:focus:not(:active)::after {
+    animation: ripple 1s ease-out;
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(20, 20);
+        opacity: 0;
+    }
+} 

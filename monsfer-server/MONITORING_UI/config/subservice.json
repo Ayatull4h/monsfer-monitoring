@@ -1,0 +1,81 @@
+{
+    "subservices": [
+        {
+            "name": "Radio FM, DRM",
+            "band_number": 1,
+            "start_freq": 87.0,
+            "stop_freq": 108.0,
+            "step_bw": 6.25
+        },
+        {
+            "name": "Penerbangan VHF",
+            "band_number": 2,
+            "start_freq": 108.0,
+            "stop_freq": 137.0,
+            "step_bw": 6.25
+        },
+        {
+            "name": "Komrad VHF, Instansi Pemerintah, Badan Usaha Keperluan Publik, Maritim VHF",
+            "band_number": 3,
+            "start_freq": 137.0,
+            "stop_freq": 174.0,
+            "step_bw": 6.25
+        },
+        {
+            "name": "DRM, DAB",
+            "band_number": 4,
+            "start_freq": 174.0,
+            "stop_freq": 230.0,
+            "step_bw": 6.25
+        },
+        {
+            "name": "Tetap, Bergerak",
+            "band_number": 5,
+            "start_freq": 235.0,
+            "stop_freq": 267.0,
+            "step_bw": 6.25
+        },
+        {
+            "name": "Tetap, Bergerak, Marabahaya",
+            "band_number": 6,
+            "start_freq": 300.0,
+            "stop_freq": 430.0,
+            "step_bw": 6.25
+        },
+        {
+            "name": "Komrad UHF",
+            "band_number": 7,
+            "start_freq": 430.0,
+            "stop_freq": 460.0,
+            "step_bw": 6.25
+        },
+        {
+            "name": "Tetap, Bergerak",
+            "band_number": 8,
+            "start_freq": 460.0,
+            "stop_freq": 470.0,
+            "step_bw": 6.25
+        },
+        {
+            "name": "Televisi UHF",
+            "band_number": 9,
+            "start_freq": 478,
+            "stop_freq": 806,
+            "step_bw": 6.25
+        },
+        {
+            "name": "Trunking, Downllink Seluler 800 ",
+            "band_number": 10,
+            "start_freq": 806,
+            "stop_freq": 880,
+            "step_bw": 6.25
+        },
+        {
+            "name": "Downlink Seluler 900",
+            "band_number": 11,
+            "start_freq": 925,
+            "stop_freq": 960,
+            "step_bw": 6.25
+        }
+    ]
+} 

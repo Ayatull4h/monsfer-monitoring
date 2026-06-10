@@ -1,0 +1,51 @@
+Cara Decode Password pada MONSFER-SERVER
+
+1. Format Password dalam userdata.json
+   - Password disimpan dalam format hash SHA-256
+   - Setiap password memiliki salt unik
+   - Format: password_hash = SHA256(password + salt)
+
+2. Cara Decode Password:
+   a. Untuk password dengan salt:
+      - Ambil password hash dari userdata.json
+      - Ambil salt yang sesuai
+      - Password asli = password_hash - salt
+      - Gunakan SHA-256 untuk memverifikasi
+
+   b. Untuk password tanpa salt (legacy):
+      - Password langsung di-hash dengan SHA-256
+      - Tidak ada salt yang digunakan
+
+3. Contoh Implementasi dalam Python:
+   ```python
+   import hashlib
+   
+   def verify_password(password, stored_hash, salt=""):
+       # Jika ada salt, gabungkan dengan password
+       if salt:
+           hashed = hashlib.sha256((password + salt).encode()).hexdigest()
+       else:
+           # Untuk password legacy tanpa salt
+           hashed = hashlib.sha256(password.encode()).hexdigest()
+           
+       return hashed == stored_hash
+   ```
+
+4. Catatan Penting:
+   - Password tidak bisa di-decode langsung karena menggunakan one-way hash
+   - Sistem hanya bisa memverifikasi password dengan membandingkan hash
+   - Salt digunakan untuk mencegah rainbow table attacks
+   - Setiap user memiliki salt unik untuk keamanan tambahan
+
+5. Proses Verifikasi Password:
+   a. User memasukkan password
+   b. Sistem mengambil salt dari database
+   c. Password + salt di-hash menggunakan SHA-256
+   d. Hash hasil dibandingkan dengan hash yang tersimpan
+   e. Jika sama, password benar
+
+6. Keamanan:
+   - Password tidak pernah disimpan dalam bentuk plain text
+   - Salt unik untuk setiap user mencegah penggunaan rainbow tables
+   - SHA-256 adalah algoritma hash yang aman dan tidak bisa di-reverse
+   - Sistem mendukung migrasi dari password tanpa salt ke dengan salt 

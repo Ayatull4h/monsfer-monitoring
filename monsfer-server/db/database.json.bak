@@ -1,0 +1,39 @@
+{
+    "admin": {
+        "username": "admin",
+        "password": "admin123"
+    },
+    "upts": {
+        "7": {
+            "id_upt": "7",
+            "fullname": "Balmon Semarang",
+            "username": "semarang",
+            "password": "semarang",
+            "sites": [
+                {
+                    "id_perangkat": "1",
+                    "site_name": "plamongan indah",
+                    "token": "tes_plamongan"
+                },
+                {
+                    "id_perangkat": "2",
+                    "site_name": "semarang indah",
+                    "token": "semarang_indah"
+                }
+            ]
+        },
+        "1": {
+            "id_upt": "1",
+            "fullname": "Balmon DKI",
+            "username": "jakarta",
+            "password": "jakarta",
+            "sites": [
+                {
+                    "id_perangkat": "1",
+                    "site_name": "DKI",
+                    "token": "tes_dki"
+                }
+            ]
+        }
+    }
+}

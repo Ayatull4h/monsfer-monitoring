@@ -1,0 +1,452 @@
+{% extends "layout.html" %}
+
+{% block head %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- Styles are now in static/css/modern-ui.css -->
+{% endblock %}
+
+{% block content %}
+<div class="upt-management-page">
+    <div class="container-fluid">
+        <!-- Header -->
+        <div class="upt-header-section">
+            <div class="upt-header-title">
+                <h1>User Management</h1>
+                <p>Kelola unit pelaksana teknis dan site monitoring lapangan</p>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <div class="upt-search-bar">
+                    <i class="bi bi-search"></i>
+                    <input type="text" v-model="searchQuery" placeholder="Cari UPT atau site...">
+                </div>
+                <button class="btn-add" @click="openAddUptModal">
+                    <i class="bi bi-plus-lg"></i>
+                    <span>Tambah UPT</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="upt-stats-grid">
+            <div class="glass-card upt-stat-card">
+                <div class="upt-stat-icon">
+                    <i class="bi bi-building"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="label">Total UPT</span>
+                    <span class="value" v-text="upts.length"></span>
+                </div>
+            </div>
+            <div class="glass-card upt-stat-card">
+                <div class="upt-stat-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--emerald-500);">
+                    <i class="bi bi-geo-alt"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="label">Total Sites</span>
+                    <span class="value" v-text="totalSites"></span>
+                </div>
+            </div>
+            <div class="glass-card upt-stat-card">
+                <div class="upt-stat-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--amber-500);">
+                    <i class="bi bi-activity"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="label">Active Units</span>
+                    <span class="value" v-text="upts.length"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- UPT List -->
+        <div class="upt-list-section">
+            <div v-if="loading" class="text-center py-5">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p class="mt-3 text-secondary">Memuat data UPT...</p>
+            </div>
+
+            <div v-else-if="uptLoadError" class="glass-card text-center py-5">
+                <i class="bi bi-exclamation-triangle text-warning" style="font-size: 48px;"></i>
+                <p class="mt-3 text-secondary" v-text="uptLoadError"></p>
+            </div>
+
+            <div v-else-if="filteredUpts.length === 0" class="glass-card text-center py-5">
+                <i class="bi bi-inbox text-muted" style="font-size: 48px;"></i>
+                <p class="mt-3 text-secondary">Tidak ada data UPT ditemukan</p>
+            </div>
+
+            <div v-for="upt in filteredUpts" :key="upt.id_upt || upt.username" class="glass-card upt-card">
+                <div class="upt-header" data-bs-toggle="collapse" :data-bs-target="'#sites-' + (upt.id_upt || upt.username)">
+                    <div class="upt-info">
+                        <div class="upt-avatar" v-text="getInitials(upt.fullname || upt.username)"></div>
+                        <div class="upt-details">
+                            <span class="name" v-text="upt.fullname || upt.username"></span>
+                            <span class="meta">
+                                <span v-text="(upt.sites || []).length"></span> Sites • 
+                                ID: <span v-text="upt.id_upt || '-'"></span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="upt-actions">
+                        <button type="button" class="action-btn" @click.stop="openEditUptModal(upt)" title="Edit UPT" aria-label="Edit UPT">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button type="button" class="action-btn danger" @click.stop="confirmDeleteUpt(upt)" title="Hapus UPT" aria-label="Hapus UPT">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                        <div class="ms-2 text-muted">
+                            <i class="bi bi-chevron-down chev-icon"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div :id="'sites-' + (upt.id_upt || upt.username)" class="collapse">
+                    <div class="sites-container">
+                        <div v-if="upt.sites && upt.sites.length > 0">
+                            <div v-for="(site, sIdx) in upt.sites" :key="sIdx" class="site-item">
+                                <div class="site-info">
+                                    <i class="bi bi-router site-icon"></i>
+                                    <span class="site-name" v-text="site.site_name || site.Site"></span>
+                                    <span class="site-meta">
+                                        ID: <span v-text="site.id_perangkat || site.id"></span>
+                                    </span>
+                                </div>
+                                <div class="upt-actions">
+                                    <button type="button" class="action-btn" @click="openEditSiteModal(upt, site)" title="Edit Site" aria-label="Edit Site">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button type="button" class="action-btn danger" @click="confirmDeleteSite(upt, site)" title="Hapus Site" aria-label="Hapus Site">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-else class="text-center py-3 text-muted" style="font-size: 13px;">
+                            Belum ada site monitoring untuk UPT ini
+                        </div>
+                        <button type="button" class="btn-add-site" @click="openAddSiteModal(upt)">
+                            <i class="bi bi-plus"></i> Tambah Site Baru
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Add/Edit UPT Modal -->
+    <div class="modal fade" id="uptModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" v-text="isEditUpt ? 'Edit UPT' : 'Tambah UPT Baru'"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form @submit.prevent="saveUpt">
+                        <div class="mb-3">
+                            <label class="form-label">ID UPT</label>
+                            <input type="text" class="form-control" v-model="uptForm.id_upt" :disabled="isEditUpt" required placeholder="Contoh: 1101">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Username</label>
+                            <input type="text" class="form-control" v-model="uptForm.username" :disabled="isEditUpt" required placeholder="Contoh: semarang">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nama Lengkap</label>
+                            <input type="text" class="form-control" v-model="uptForm.fullname" required placeholder="Contoh: UPT Semarang">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Password <span v-if="isEditUpt" class="text-muted">(Kosongkan jika tidak diubah)</span></label>
+                            <input type="password" class="form-control" v-model="uptForm.password" :required="!isEditUpt">
+                        </div>
+                        <div class="modal-footer px-0 pb-0">
+                            <button type="button" class="btn btn-link text-secondary text-decoration-none" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-add" :disabled="loadingAction">
+                                <span v-if="loadingAction" class="spinner-border spinner-border-sm me-2"></span>
+                                <span v-text="isEditUpt ? 'Simpan Perubahan' : 'Tambah UPT'"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Site Modal -->
+    <div class="modal fade" id="siteModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" v-text="isEditSite ? 'Edit Site' : 'Tambah Site Baru'"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form @submit.prevent="saveSite">
+                        <div class="mb-3">
+                            <label class="form-label">UPT Terkait</label>
+                            <input type="text" class="form-control" :value="currentUpt ? currentUpt.fullname : ''" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">ID Perangkat / Device ID</label>
+                            <input type="text" class="form-control" v-model="siteForm.id_perangkat" required placeholder="Contoh: SDR-001">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nama Site</label>
+                            <input type="text" class="form-control" v-model="siteForm.site_name" required placeholder="Contoh: Site Menara ABC">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Token</label>
+                            <input type="text" class="form-control" v-model="siteForm.token" required placeholder="Contoh: site_menara_abc">
+                        </div>
+                        <div class="modal-footer px-0 pb-0">
+                            <button type="button" class="btn btn-link text-secondary text-decoration-none" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-add" :disabled="loadingAction">
+                                <span v-if="loadingAction" class="spinner-border spinner-border-sm me-2"></span>
+                                <span v-text="isEditSite ? 'Simpan Perubahan' : 'Simpan Site'"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+window.pageMixin = {
+    data() {
+        return {
+            loading: true,
+            loadingAction: false,
+            upts: [],
+            uptLoadError: '',
+            searchQuery: '',
+            
+            // UPT Form
+            isEditUpt: false,
+            uptForm: {
+                id_upt: '',
+                username: '',
+                fullname: '',
+                password: ''
+            },
+            
+            // Site Form
+            isEditSite: false,
+            currentUpt: null,
+            siteForm: {
+                id_perangkat: '',
+                site_name: '',
+                token: '',
+                old_site_name: '',
+                old_id_perangkat: ''
+            }
+        }
+    },
+    mounted() {
+        this.fetchUpts();
+    },
+    computed: {
+        filteredUpts() {
+            if (!this.searchQuery) return this.upts;
+            const q = this.searchQuery.toLowerCase();
+            return this.upts.filter(u => {
+                const nameMatch = (u.fullname || '').toLowerCase().includes(q) || 
+                                (u.username || '').toLowerCase().includes(q);
+                const siteMatch = (u.sites || []).some(s => 
+                    (s.site_name || s.Site || '').toLowerCase().includes(q)
+                );
+                return nameMatch || siteMatch;
+            });
+        },
+        totalSites() {
+            return this.upts.reduce((acc, u) => acc + (u.sites ? u.sites.length : 0), 0);
+        }
+    },
+    methods: {
+        getInitials(name) {
+            if (!name) return 'U';
+            return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+        },
+        async fetchUpts() {
+            this.loading = true;
+            this.uptLoadError = '';
+            try {
+                const res = await axios.get('/api/upt/list');
+                const payload = res && res.data ? res.data : null;
+                
+                if (payload && payload.ok) {
+                    this.upts = payload.upts || [];
+                } else if (payload && payload.success) {
+                    this.upts = payload.upts || [];
+                } else {
+                    throw new Error(payload.error || 'Gagal memuat data');
+                }
+            } catch (err) {
+                console.error(err);
+                this.uptLoadError = err.message || 'Gagal mengambil data UPT';
+                this.upts = [];
+            } finally {
+                this.loading = false;
+            }
+        },
+        
+        // UPT Actions
+        openAddUptModal() {
+            this.isEditUpt = false;
+            this.uptForm = { id_upt: '', username: '', fullname: '', password: '' };
+            const modal = new bootstrap.Modal(document.getElementById('uptModal'));
+            modal.show();
+        },
+        openEditUptModal(upt) {
+            this.isEditUpt = true;
+            this.uptForm = {
+                id_upt: upt.id_upt,
+                username: upt.username,
+                fullname: upt.fullname,
+                password: '' 
+            };
+            const modal = new bootstrap.Modal(document.getElementById('uptModal'));
+            modal.show();
+        },
+        async saveUpt() {
+            this.loadingAction = true;
+            try {
+                if (this.isEditUpt) {
+                    const id = this.uptForm.id_upt;
+                    const payload = {
+                        fullname: this.uptForm.fullname,
+                        password: this.uptForm.password || ''
+                    };
+                    const res = await axios.put(`/api/upt/${encodeURIComponent(id)}`, payload);
+                    const data = res && res.data ? res.data : {};
+                    if (!data.ok) throw new Error(data.error || 'Gagal menyimpan perubahan UPT');
+                } else {
+                    const payload = {
+                        id_upt: this.uptForm.id_upt,
+                        username: this.uptForm.username,
+                        fullname: this.uptForm.fullname,
+                        password: this.uptForm.password
+                    };
+                    const res = await axios.post('/api/upt', payload);
+                    const data = res && res.data ? res.data : {};
+                    if (!data.ok) throw new Error(data.error || 'Gagal membuat UPT');
+                }
+
+                const inst = bootstrap.Modal.getInstance(document.getElementById('uptModal'));
+                if (inst) inst.hide();
+                await this.fetchUpts();
+            } catch (err) {
+                console.error(err);
+                alert((err && err.message) ? err.message : 'Gagal menyimpan UPT');
+            } finally {
+                this.loadingAction = false;
+            }
+        },
+        async confirmDeleteUpt(upt) {
+            if (confirm(`Hapus UPT ${upt.fullname}?`)) {
+                this.loadingAction = true;
+                try {
+                    const id = upt.id_upt;
+                    const res = await axios.delete(`/api/upt/${encodeURIComponent(id)}`);
+                    const data = res && res.data ? res.data : {};
+                    if (!data.ok) throw new Error(data.error || 'Gagal menghapus UPT');
+                    await this.fetchUpts();
+                } catch (err) {
+                    console.error(err);
+                    alert((err && err.message) ? err.message : 'Gagal menghapus UPT');
+                } finally {
+                    this.loadingAction = false;
+                }
+            }
+        },
+
+        // Site Actions
+        openAddSiteModal(upt) {
+            this.isEditSite = false;
+            this.currentUpt = upt;
+            this.siteForm = { id_perangkat: '', site_name: '', token: '', old_site_name: '', old_id_perangkat: '' };
+            const modal = new bootstrap.Modal(document.getElementById('siteModal'));
+            modal.show();
+        },
+        openEditSiteModal(upt, site) {
+            this.isEditSite = true;
+            this.currentUpt = upt;
+            this.siteForm = {
+                id_perangkat: site.id_perangkat || site.id,
+                site_name: site.site_name || site.Site,
+                token: site.token || '',
+                old_site_name: site.site_name || site.Site,
+                old_id_perangkat: site.id_perangkat || site.id || ''
+            };
+            const modal = new bootstrap.Modal(document.getElementById('siteModal'));
+            modal.show();
+        },
+        async saveSite() {
+             if (!this.currentUpt || !this.currentUpt.id_upt) {
+                 alert('UPT tidak valid');
+                 return;
+             }
+             this.loadingAction = true;
+             try {
+                 const idUpt = this.currentUpt.id_upt;
+                 if (this.isEditSite) {
+                     const key = this.siteForm.old_id_perangkat || this.siteForm.id_perangkat || this.siteForm.token;
+                     const payload = {
+                         id_perangkat: this.siteForm.id_perangkat,
+                         site_name: this.siteForm.site_name,
+                         token: this.siteForm.token,
+                         old_site_name: this.siteForm.old_site_name
+                     };
+                     const res = await axios.put(`/api/upt/${encodeURIComponent(idUpt)}/sites/${encodeURIComponent(key)}`, payload);
+                     const data = res && res.data ? res.data : {};
+                     if (!data.ok) throw new Error(data.error || 'Gagal menyimpan perubahan Site');
+                     if (data.token) this.siteForm.token = data.token;
+                 } else {
+                     const payload = {
+                         id_perangkat: this.siteForm.id_perangkat,
+                         site_name: this.siteForm.site_name,
+                         token: this.siteForm.token
+                     };
+                     const res = await axios.post(`/api/upt/${encodeURIComponent(idUpt)}/sites`, payload);
+                     const data = res && res.data ? res.data : {};
+                     if (!data.ok) throw new Error(data.error || 'Gagal menambah Site');
+                     if (data.token) this.siteForm.token = data.token;
+                 }
+
+                 const inst = bootstrap.Modal.getInstance(document.getElementById('siteModal'));
+                 if (inst) inst.hide();
+                 await this.fetchUpts();
+             } catch (err) {
+                 console.error(err);
+                 alert((err && err.message) ? err.message : 'Gagal menyimpan Site');
+             } finally {
+                 this.loadingAction = false;
+             }
+        },
+        async confirmDeleteSite(upt, site) {
+             if (confirm(`Hapus Site ${site.site_name}?`)) {
+                this.loadingAction = true;
+                try {
+                    const idUpt = upt.id_upt;
+                    const key = (site.id_perangkat || site.id || site.token || '').toString();
+                    const res = await axios.delete(`/api/upt/${encodeURIComponent(idUpt)}/sites/${encodeURIComponent(key)}`);
+                    const data = res && res.data ? res.data : {};
+                    if (!data.ok) throw new Error(data.error || 'Gagal menghapus Site');
+                    await this.fetchUpts();
+                } catch (err) {
+                    console.error(err);
+                    alert((err && err.message) ? err.message : 'Gagal menghapus Site');
+                } finally {
+                    this.loadingAction = false;
+                }
+            }
+        }
+    }
+}
+</script>
+{% endblock %}

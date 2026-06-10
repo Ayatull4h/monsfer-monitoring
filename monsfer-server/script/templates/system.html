@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h3 mb-4">System Information</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Users</h5>
+                    <h2 class="card-text">{{ user_count }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Sites</h5>
+                    <h2 class="card-text">{{ site_count }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total UPT</h5>
+                    <h2 class="card-text">{{ upt_count }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">System Errors</h5>
+                    <h2 class="card-text">{{ system_errors|length }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">System Errors</h5>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Error</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for error in system_errors %}
+                                <tr>
+                                    <td>{{ error.timestamp }}</td>
+                                    <td>{{ error.error }}</td>
+                                    <td>{{ error.details }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Orphaned Folders</h5>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Path</th>
+                                    <th>Size</th>
+                                    <th>Last Modified</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for folder in orphaned_folders %}
+                                <tr>
+                                    <td>{{ folder.path }}</td>
+                                    <td>{{ folder.size }}</td>
+                                    <td>{{ folder.last_modified }}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-danger" onclick="deleteOrphanedFolder('{{ folder.path }}')">
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

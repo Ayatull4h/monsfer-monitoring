@@ -1,0 +1,37 @@
+2025-05-07 01:05:27,652 - INFO - Certificate directory ensured at Z:\NEW_MONITORING_UI\config\cert
+2025-05-07 01:05:27,696 - INFO - Generated RSA key
+2025-05-07 01:05:27,699 - INFO - Generated certificate
+2025-05-07 01:05:27,711 - INFO - Certificate directory ensured at Z:\NEW_MONITORING_UI\config\cert
+2025-05-07 01:05:27,711 - INFO - Writing certificate to Z:\NEW_MONITORING_UI\config\cert\certificate.crt
+2025-05-07 01:05:27,745 - INFO - Writing private key to Z:\NEW_MONITORING_UI\config\cert\private.key
+2025-05-07 01:05:27,767 - INFO - Generated new self-signed certificate valid for 365 days
+2025-05-07 01:09:05,084 - INFO - Certificate directory ensured at Z:\NEW_MONITORING_UI\config\cert
+2025-05-07 01:10:52,206 - INFO - Certificate directory ensured at Z:\NEW_MONITORING_UI\config\cert
+2025-05-07 01:10:52,222 - INFO - Certificate is valid
+2025-05-07 01:10:53,553 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on https://127.0.0.1:443
+ * Running on https://10.100.80.25:443
+2025-05-07 01:10:53,554 - INFO - [33mPress CTRL+C to quit[0m
+2025-05-07 01:12:28,847 - INFO - Certificate directory ensured at Z:\NEW_MONITORING_UI\config\cert
+2025-05-07 01:12:28,862 - INFO - Certificate is valid
+2025-05-07 01:12:30,159 - WARNING -  * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+2025-05-07 01:12:30,160 - INFO -  * Running on https://10.100.80.25:443/ (Press CTRL+C to quit)
+2025-05-07 01:12:55,559 - INFO - 10.100.80.25 - - [07/May/2025 01:12:55] "[32mGET / HTTP/1.1[0m" 302 -
+2025-05-07 01:12:55,600 - INFO - 10.100.80.25 - - [07/May/2025 01:12:55] "GET /monitoring HTTP/1.1" 200 -
+2025-05-07 01:12:55,733 - INFO - 10.100.80.25 - - [07/May/2025 01:12:55] "GET /js/app.js HTTP/1.1" 200 -
+2025-05-07 01:12:55,745 - INFO - 10.100.80.25 - - [07/May/2025 01:12:55] "GET /css/style.css HTTP/1.1" 200 -
+2025-05-07 01:12:55,801 - INFO - 10.100.80.25 - - [07/May/2025 01:12:55] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-05-07 01:13:26,019 - INFO - Certificate directory ensured at Z:\NEW_MONITORING_UI\config\cert
+2025-05-07 01:13:26,044 - INFO - Generated RSA key
+2025-05-07 01:13:26,048 - INFO - Generated certificate
+2025-05-07 01:13:26,059 - INFO - Certificate directory ensured at Z:\NEW_MONITORING_UI\config\cert
+2025-05-07 01:13:26,059 - INFO - Writing certificate to Z:\NEW_MONITORING_UI\config\cert\certificate.crt
+2025-05-07 01:13:26,092 - INFO - Writing private key to Z:\NEW_MONITORING_UI\config\cert\private.key
+2025-05-07 01:13:26,110 - INFO - Generated new self-signed certificate valid for 365 days
+2025-05-07 01:14:00,584 - INFO - Certificate directory ensured at Z:\NEW_MONITORING_UI\config\cert
+2025-05-07 01:14:00,598 - INFO - Certificate is valid
+2025-05-07 01:14:01,915 - WARNING -  * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+2025-05-07 01:14:01,916 - INFO -  * Running on https://10.100.80.25:8443/ (Press CTRL+C to quit)

@@ -1,0 +1,16 @@
+[Unit]
+Description=SDR Health Agent
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/monsfer-server/monsfer
+ExecStart=/usr/bin/python3 /home/monsfer-server/monsfer/agent_health.py
+Restart=always
+RestartSec=5
+User=monsfer-server
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

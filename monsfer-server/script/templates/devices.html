@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Device Management</h1>
+        <button class="btn btn-primary" data-toggle="modal" data-target="#deviceModal">
+            <i class="fas fa-plus"></i> Add Device
+        </button>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="devicesTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Device ID</th>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Last Seen</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Device data will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Device Modal -->
+<div class="modal fade" id="deviceModal" tabindex="-1" role="dialog" aria-labelledby="deviceModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deviceModalLabel">Add/Edit Device</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="deviceForm">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" id="deviceId">
+                    <div class="form-group">
+                        <label for="deviceName">Device Name</label>
+                        <input type="text" class="form-control" id="deviceName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="deviceType">Device Type</label>
+                        <select class="form-control" id="deviceType" required>
+                            <option value="">Select Type</option>
+                            <option value="sensor">Sensor</option>
+                            <option value="controller">Controller</option>
+                            <option value="gateway">Gateway</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="saveDevice">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    // Initialize tooltips and popovers
+    initTooltips();
+    initPopovers();
+
+    // Initialize DataTable
+    const devicesTable = initDataTable('devicesTable', {
+        order: [[0, 'asc']],
+        columns: [
+            { data: 'id' },
+            { data: 'name' },
+            { data: 'type' },
+            { 
+                data: 'status',
+                render: function(data) {
+                    const badgeClass = data === 'active' ? 'success' : 'danger';
+                    return `<span class="badge badge-${badgeClass}">${data}</span>`;
+                }
+            },
+            { 
+                data: 'last_seen',
+                render: function(data) {
+                    return formatDate(data);
+                }
+            },
+            {
+                data: null,
+                render: function(data, type, row) {
+                    return `
+                        <button class="btn btn-sm btn-outline-primary edit-device" data-id="${row.id}" data-toggle="tooltip" title="{{ lang_manager.get_text('common.edit') }}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger delete-device" data-id="${row.id}" data-toggle="tooltip" title="{{ lang_manager.get_text('common.delete') }}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    `;
+                }
+            }
+        ]
+    });
+
+    // Handle device form submission
+    handleFormSubmit('deviceForm', function(response) {
+        $('#deviceModal').modal('hide');
+        devicesTable.ajax.reload();
+        showAlert('{{ lang_manager.get_text("devices.save_success") }}');
+    });
+
+    // Edit device
+    $(document).on('click', '.edit-device', function() {
+        const deviceId = $(this).data('id');
+        $.ajax({
+            url: `/api/devices/${deviceId}`,
+            method: 'GET',
+            success: function(response) {
+                if (response.success) {
+                    const device = response.device;
+                    $('#deviceId').val(device.id);
+                    $('#deviceName').val(device.name);
+                    $('#deviceType').val(device.type);
+                    $('#deviceModal').modal('show');
+                }
+            },
+            error: function(xhr) {
+                console.error('Error loading device:', xhr);
+                showAlert('{{ lang_manager.get_text("common.error") }}', 'danger');
+            }
+        });
+    });
+
+    // Delete device
+    $(document).on('click', '.delete-device', function() {
+        if (confirm('{{ lang_manager.get_text("devices.confirm_delete") }}')) {
+            const deviceId = $(this).data('id');
+            $.ajax({
+                url: `/api/devices/${deviceId}`,
+                method: 'DELETE',
+                success: function(response) {
+                    if (response.success) {
+                        devicesTable.ajax.reload();
+                        showAlert('{{ lang_manager.get_text("devices.delete_success") }}');
+                    } else {
+                        showAlert(response.error || '{{ lang_manager.get_text("common.error") }}', 'danger');
+                    }
+                },
+                error: function(xhr) {
+                    console.error('Error deleting device:', xhr);
+                    showAlert('{{ lang_manager.get_text("common.error") }}', 'danger');
+                }
+            });
+        }
+    });
+
+    // Clear form when modal is closed
+    $('#deviceModal').on('hidden.bs.modal', function() {
+        $('#deviceForm')[0].reset();
+        $('#deviceId').val('');
+    });
+});
+</script>
+{% endblock %} 

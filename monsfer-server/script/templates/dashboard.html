@@ -1,0 +1,1706 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - MONSFER</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-width: 250px;
+            --sidebar-collapsed-width: 60px;
+            --warning-color-light: #d35400;  /* Darker orange for light theme */
+            --warning-color-dark: #ffc107;   /* Bootstrap warning color for dark theme */
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bs-body-bg);
+            transition: margin-left 0.3s;
+        }
+        
+        .sidebar {
+            width: var(--sidebar-width);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            background-color: var(--bs-body-bg);
+            border-right: 1px solid var(--bs-border-color);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed-width);
+        }
+        
+        .sidebar.collapsed .nav-link span,
+        .sidebar.collapsed .sidebar-header h4,
+        .sidebar.collapsed .sidebar-header small {
+            display: none;
+        }
+        
+        .sidebar.collapsed .nav-link {
+            justify-content: center;
+        }
+        
+        .sidebar.collapsed .nav-link i {
+            margin-right: 0;
+        }
+        
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .main-content.expanded {
+            margin-left: var(--sidebar-collapsed-width);
+        }
+        
+        .sidebar-toggle {
+            position: relative;
+            margin-right: 1rem;
+            padding: 0.5rem;
+            width: 40px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-toggle i {
+            font-size: 1.5rem;
+            line-height: 1;
+        }
+        
+        @media (min-width: 769px) {
+            .sidebar-toggle {
+                display: inline-flex;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: -80%;
+                width: 80%;
+                height: 100vh;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                z-index: 1001;
+            }
+
+            .sidebar.show {
+                left: 0;
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 1rem;
+                padding-top: 4.5rem;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .dashboard-header {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                padding: 1rem;
+                background-color: var(--bs-body-bg);
+                border-bottom: 1px solid var(--bs-border-color);
+                z-index: 1000;
+            }
+
+            .dashboard-header h1 {
+                font-size: 1.5rem;
+                margin: 0;
+            }
+
+            .sidebar-toggle {
+                position: fixed;
+                top: 1rem;
+                right: 1rem;
+                z-index: 1003;
+                display: inline-flex !important;
+            }
+        }
+        
+        .dashboard-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .upt-card {
+            background-color: var(--bs-body-bg);
+            border: 1px solid var(--bs-border-color);
+            border-radius: 1rem;
+            transition: all 0.2s;
+            box-shadow: 
+                0 6px 12px rgba(0, 0, 0, 0.15),
+                0 0 0 1px rgba(0, 0, 0, 0.05),
+                0 0 0 2px rgba(255, 255, 255, 0.1);
+        }
+
+        [data-bs-theme="light"] .upt-card {
+            background: linear-gradient(135deg, #f0f0f0 0%, #ffffff 100%);
+            border-color: rgba(0, 0, 0, 0.1);
+            box-shadow: 
+                0 6px 12px rgba(0, 0, 0, 0.15),
+                0 0 0 1px rgba(0, 0, 0, 0.05),
+                0 0 0 2px rgba(255, 255, 255, 0.1);
+        }
+
+        [data-bs-theme="dark"] .upt-card {
+            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 
+                0 6px 12px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.05),
+                0 0 0 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        .upt-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 
+                0 12px 24px rgba(0, 0, 0, 0.2),
+                0 0 0 1px rgba(0, 0, 0, 0.05),
+                0 0 0 2px rgba(255, 255, 255, 0.1);
+        }
+        
+        [data-bs-theme="light"] .upt-card:hover {
+            box-shadow: 
+                0 12px 24px rgba(0, 0, 0, 0.2),
+                0 0 0 1px rgba(0, 0, 0, 0.05),
+                0 0 0 2px rgba(255, 255, 255, 0.1);
+        }
+
+        [data-bs-theme="dark"] .upt-card:hover {
+            box-shadow: 
+                0 12px 24px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.05),
+                0 0 0 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        .site-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .site-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .site-list::-webkit-scrollbar-track {
+            background: var(--bs-body-bg);
+        }
+        
+        .site-list::-webkit-scrollbar-thumb {
+            background: var(--bs-border-color);
+            border-radius: 3px;
+        }
+        
+        .theme-toggle {
+            position: fixed;
+            bottom: 1rem;
+            left: 1rem;
+            z-index: 1001;
+        }
+        
+        .sidebar.collapsed + .main-content .theme-toggle {
+            left: calc(var(--sidebar-collapsed-width) + 1rem);
+        }
+        
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        
+        .stats-card {
+            background-color: var(--bs-body-bg);
+            border: 1px solid var(--bs-border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.2s;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        [data-bs-theme="light"] .stats-card {
+            background: linear-gradient(135deg, #bbdefb 0%, #ffffff 100%);
+            border-color: rgba(0, 0, 0, 0.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        [data-bs-theme="dark"] .stats-card {
+            background: linear-gradient(135deg, #0d47a1 0%, #1a1a1a 100%);
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+        }
+        
+        [data-bs-theme="light"] .stats-card:hover {
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        [data-bs-theme="dark"] .stats-card:hover {
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
+        }
+        
+        .stats-card h3 {
+            color: var(--bs-primary);
+            font-weight: 600;
+        }
+        
+        [data-bs-theme="light"] .stats-card h3 {
+            color: #1565c0;
+        }
+
+        [data-bs-theme="dark"] .stats-card h3 {
+            color: #90caf9;
+        }
+        
+        .admin-actions {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            z-index: 1001;
+        }
+        
+        .list-group-item {
+            background-color: var(--bs-body-bg);
+            border-color: var(--bs-border-color);
+        }
+        
+        .list-group-item:hover {
+            background-color: var(--bs-primary-bg-subtle);
+        }
+        
+        .card-header {
+            background-color: var(--bs-body-bg);
+            border-bottom-color: var(--bs-border-color);
+        }
+        
+        .card-footer {
+            background-color: var(--bs-body-bg);
+            border-top-color: var(--bs-border-color);
+        }
+        
+        .btn-outline-primary {
+            border-color: var(--bs-primary);
+            color: var(--bs-primary);
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--bs-primary);
+            color: white;
+        }
+        
+        .btn-outline-danger {
+            border-color: var(--bs-danger);
+            color: var(--bs-danger);
+        }
+        
+        .btn-outline-danger:hover {
+            background-color: var(--bs-danger);
+            color: white;
+        }
+        
+        .btn-outline-success {
+            border-color: var(--bs-success);
+            color: var(--bs-success);
+        }
+        
+        .btn-outline-success:hover {
+            background-color: var(--bs-success);
+            color: white;
+        }
+
+        /* Warning color styles */
+        [data-bs-theme="light"] .text-warning,
+        [data-bs-theme="light"] .list-group-item-warning {
+            color: var(--warning-color-light) !important;
+        }
+
+        [data-bs-theme="light"] .list-group-item-warning {
+            background-color: rgba(211, 84, 0, 0.1);
+            border-color: rgba(211, 84, 0, 0.2);
+        }
+
+        [data-bs-theme="dark"] .text-warning,
+        [data-bs-theme="dark"] .list-group-item-warning {
+            color: var(--warning-color-dark) !important;
+        }
+
+        [data-bs-theme="dark"] .list-group-item-warning {
+            background-color: rgba(255, 193, 7, 0.1);
+            border-color: rgba(255, 193, 7, 0.2);
+        }
+
+        .sidebar .nav-link {
+            color: var(--bs-body-color);
+            padding: 0.8rem 1rem;
+            border-radius: 0.5rem;
+            margin: 0.2rem 0.5rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+            justify-content: flex-start;
+        }
+
+        .sidebar.collapsed .nav-link {
+            justify-content: center;
+            padding: 0.8rem 0.5rem;
+        }
+
+        .sidebar .nav-link span {
+            transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: left center;
+        }
+
+        .sidebar.collapsed .nav-link span {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        .sidebar .nav-link i {
+            transition: margin 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            min-width: 1.5rem;
+            text-align: center;
+        }
+
+        .sidebar.collapsed .nav-link i {
+            margin-right: 0;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: var(--bs-primary-bg-subtle);
+            color: var(--bs-primary);
+        }
+
+        .sidebar .nav-link.active {
+            background-color: var(--bs-primary);
+            color: white;
+        }
+
+        .sidebar-header {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        .sidebar-header h4,
+        .sidebar-header small {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: center;
+            white-space: nowrap;
+        }
+
+        .sidebar.collapsed .sidebar-header {
+            padding: 0;
+        }
+
+        .sidebar.collapsed .sidebar-header h4,
+        .sidebar.collapsed .sidebar-header small {
+            opacity: 0;
+            transform: scale(0.8);
+            height: 0;
+            margin: 0;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .sidebar-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+
+        .card {
+            background-color: var(--bs-body-bg);
+            border: 1px solid var(--bs-border-color);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        [data-bs-theme="light"] .card {
+            background-color: #ffffff;
+            border-color: rgba(0, 0, 0, 0.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        [data-bs-theme="dark"] .card {
+            background-color: #1a1a1a;
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .card:hover {
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        [data-bs-theme="light"] .card:hover {
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        [data-bs-theme="dark"] .card:hover {
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
+        }
+
+        .sidebar .mobile-close-btn {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar .mobile-close-btn {
+                display: none;
+            }
+
+            .sidebar.show .mobile-close-btn {
+                display: block;
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+                z-index: 1002;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .sidebar .mobile-close-btn {
+                display: none !important;
+            }
+        }
+
+        .upt-card .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .upt-card .card-subtitle {
+            font-size: 0.9rem;
+        }
+
+        .upt-card .card-text {
+            font-size: 1rem;
+        }
+
+        .upt-card .site-list h6 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .upt-card .list-group-item {
+            font-size: 0.95rem;
+        }
+
+        .upt-card .list-group-item small {
+            font-size: 0.85rem;
+        }
+
+        .upt-card .btn {
+            font-size: 0.9rem;
+        }
+
+        .search-container {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .search-container input {
+            padding-left: 2.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--bs-border-color);
+            background-color: var(--bs-body-bg);
+            color: var(--bs-body-color);
+        }
+
+        .search-container i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--bs-secondary);
+        }
+
+        .search-container input:focus {
+            border-color: var(--bs-primary);
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="p-2">
+            <div class="text-center mb-4 sidebar-header">
+                <h4 class="mb-0">MONSFER</h4>
+                <small class="text-muted">Management System</small>
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#" onclick="showContent('dashboard')">
+                        <i class="bi bi-house-door me-2"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="showContent('users')">
+                        <i class="bi bi-people me-2"></i>
+                        <span>User Management</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="showContent('settings')">
+                        <i class="bi bi-gear me-2"></i>
+                        <span>Admin Settings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="showContent('system')">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <span>System Info</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('logout') }}">
+                        <i class="bi bi-box-arrow-right me-2"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <main class="main-content" id="mainContent">
+        <!-- Dashboard Content -->
+        <div id="dashboardContent" class="content-section">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+                <div class="dashboard-header">
+                    <button class="btn btn-sm btn-primary sidebar-toggle" onclick="toggleSidebar()">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <h1 class="h2 mb-0">Dashboard</h1>
+                </div>
+                <div>
+                    <button class="btn btn-primary" onclick="saveFolders()">
+                        <i class="bi bi-save"></i> Save
+                    </button>
+                    <button class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#addUptModal">
+                        <i class="bi bi-plus-circle"></i> Add UPT
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="stats-card">
+                        <h3 class="mb-0">{{ upts|length }}</h3>
+                        <p class="mb-0">Total UPT</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stats-card">
+                        <h3 class="mb-0">{{ upts|map(attribute='sites')|map('length')|sum }}</h3>
+                        <p class="mb-0">Total Sites</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stats-card">
+                        <h3 class="mb-0">{{ upts|selectattr('sites', 'equalto', [])|list|length }}</h3>
+                        <p class="mb-0">UPT without Sites</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="search-container">
+                <i class="bi bi-search"></i>
+                <input type="text" class="form-control" id="uptSearch" placeholder="Search UPT by name, ID, username, or site...">
+            </div>
+
+            <!-- UPTs Grid -->
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="uptGrid">
+                {% for upt in upts %}
+                <div class="col">
+                    <div class="card upt-card h-100">
+                        <div class="card-header bg-transparent">
+                            <h5 class="card-title mb-0">{{ upt.fullname }}</h5>
+                            <small class="text-muted">ID: {{ upt.id_upt }}</small>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                <strong>Username:</strong> {{ upt.username }}
+                            </p>
+                            
+                            <h6 class="mt-3">Sites</h6>
+                            <div class="site-list">
+                                {% if upt.sites %}
+                                    {% for site in upt.sites %}
+                                    <li class="list-group-item bg-transparent">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>{{ site.site_name }}</strong><br>
+                                                <small class="text-muted">ID: {{ site.id_perangkat }}</small><br>
+                                                <div class="d-flex align-items-center">
+                                                    <small class="text-muted">Token: </small>
+                                                    <button class="btn btn-sm btn-link p-0 ms-1" onclick="toggleToken(this)">
+                                                        <i class="bi bi-eye"></i>
+                                                    </button>
+                                                    <small class="text-muted ms-1 token-text" style="display: none;">{{ site.token }}</small>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <button class="btn btn-sm btn-outline-primary" 
+                                                        onclick="editSite('{{ upt.id_upt }}', '{{ site.id_perangkat }}', '{{ site.site_name }}', '{{ site.token }}')">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" 
+                                                        onclick="deleteSite('{{ upt.id_upt }}', '{{ site.id_perangkat }}')">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    {% endfor %}
+                                {% else %}
+                                    <p class="text-muted">No sites added yet</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <button class="btn btn-sm btn-outline-primary" 
+                                    onclick="editUpt('{{ upt.id_upt }}', '{{ upt.fullname }}', '{{ upt.username }}', '{{ upt.password }}')">
+                                <i class="bi bi-pencil"></i> Edit UPT
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" 
+                                    onclick="deleteUpt('{{ upt.id_upt }}')">
+                                <i class="bi bi-trash"></i> Delete UPT
+                            </button>
+                            <button class="btn btn-sm btn-outline-success" 
+                                    onclick="showAddSiteModal('{{ upt.id_upt }}')">
+                                <i class="bi bi-plus-circle"></i> Add Site
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- User Management Content -->
+        <div id="usersContent" class="content-section" style="display: none;">
+            {% include 'user_management.html' %}
+        </div>
+
+        <!-- Admin Settings Content -->
+        <div id="settingsContent" class="content-section" style="display: none;">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+                <div class="dashboard-header">
+                    <h1 class="h2 mb-0">Admin Settings</h1>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <form id="adminSettingsForm">
+                        <div class="mb-3">
+                            <label for="admin_username" class="form-label">Admin Username</label>
+                            <input type="text" class="form-control" id="admin_username" value="{{ admin_config.USERNAME }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="admin_password" class="form-label">Admin Password</label>
+                            <input type="password" class="form-control" id="admin_password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="admin_fullname" class="form-label">Admin Full Name</label>
+                            <input type="text" class="form-control" id="admin_fullname" value="{{ admin_config.FULLNAME }}" required>
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="updateAdminSettings()">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Info Content -->
+        <div id="systemContent" class="content-section" style="display: none;">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+                <div class="dashboard-header">
+                    <h1 class="h2 mb-0">System Information</h1>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <ul class="nav nav-tabs" id="systemInfoTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="folders-tab" data-bs-toggle="tab" data-bs-target="#folders" type="button" role="tab" onclick="checkFolders()">
+                                <i class="bi bi-folder me-2"></i>Folders
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="errors-tab" data-bs-toggle="tab" data-bs-target="#errors" type="button" role="tab" onclick="checkErrors()">
+                                <i class="bi bi-exclamation-triangle me-2"></i>Warnings
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="orphaned-tab" data-bs-toggle="tab" data-bs-target="#orphaned" type="button" role="tab" onclick="checkOrphaned()">
+                                <i class="bi bi-folder-x me-2"></i>Orphaned
+                            </button>
+                        </li>
+                    </ul>
+                    <div class="tab-content p-3" id="systemInfoTabsContent">
+                        <div class="tab-pane fade show active" id="folders" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="mb-0">Folder Status</h6>
+                                <button class="btn btn-sm btn-primary" onclick="checkFolders()">
+                                    <i class="bi bi-arrow-clockwise"></i> Refresh
+                                </button>
+                            </div>
+                            <div id="folderStatus" class="list-group">
+                                <!-- Folder status will be loaded here -->
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="errors" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="mb-0">Peringatan Sistem</h6>
+                                <button class="btn btn-sm btn-primary" onclick="checkErrors()">
+                                    <i class="bi bi-arrow-clockwise"></i> Muat Ulang
+                                </button>
+                            </div>
+                            <div id="errorList" class="list-group">
+                                <!-- Errors will be loaded here -->
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="orphaned" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="mb-0">Orphaned Folders</h6>
+                                <button class="btn btn-sm btn-primary" onclick="checkOrphaned()">
+                                    <i class="bi bi-arrow-clockwise"></i> Refresh
+                                </button>
+                            </div>
+                            <div id="orphanedList" class="list-group">
+                                <!-- Orphaned folders will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Theme Toggle Button -->
+    <button class="btn btn-icon btn-primary theme-toggle" onclick="toggleTheme()">
+        <i class="bi bi-moon-fill"></i>
+    </button>
+
+    <!-- Admin Actions Button -->
+    <div class="admin-actions">
+        <button class="btn btn-icon btn-primary" data-bs-toggle="modal" data-bs-target="#adminSettingsModal">
+            <i class="bi bi-gear"></i>
+        </button>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="verifyToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <i class="bi bi-check-circle me-2"></i>
+                <strong class="me-auto">Success</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                Verification complete.
+            </div>
+        </div>
+    </div>
+
+    <!-- Add UPT Modal -->
+    <div class="modal fade" id="addUptModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New UPT</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addUptForm">
+                        <div class="mb-3">
+                            <label for="id_upt" class="form-label">UPT ID</label>
+                            <input type="text" class="form-control" id="id_upt" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fullname" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="fullname" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="submitAddUpt()">Add UPT</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit UPT Modal -->
+    <div class="modal fade" id="editUptModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit UPT</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editUptForm">
+                        <input type="hidden" id="edit_id_upt">
+                        <div class="mb-3">
+                            <label for="edit_fullname" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="edit_fullname" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="edit_username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="edit_password" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="submitEditUpt()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Site Modal -->
+    <div class="modal fade" id="addSiteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Site</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addSiteForm">
+                        <input type="hidden" id="site_upt_id">
+                        <div class="mb-3">
+                            <label for="id_perangkat" class="form-label">Device ID</label>
+                            <input type="text" class="form-control" id="id_perangkat" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="site_name" class="form-label">Site Name</label>
+                            <input type="text" class="form-control" id="site_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="token" class="form-label">Token</label>
+                            <input type="text" class="form-control" id="token" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="submitAddSite()">Add Site</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Site Modal -->
+    <div class="modal fade" id="editSiteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Site</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editSiteForm">
+                        <input type="hidden" id="edit_site_upt_id">
+                        <input type="hidden" id="edit_id_perangkat">
+                        <div class="mb-3">
+                            <label for="edit_site_name" class="form-label">Site Name</label>
+                            <input type="text" class="form-control" id="edit_site_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_token" class="form-label">Token</label>
+                            <input type="text" class="form-control" id="edit_token" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="submitEditSite()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Settings Modal -->
+    <div class="modal fade" id="adminSettingsModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Admin Settings</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="adminSettingsForm">
+                        <div class="mb-3">
+                            <label for="admin_username" class="form-label">Admin Username</label>
+                            <input type="text" class="form-control" id="admin_username" value="{{ admin_config.USERNAME }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="admin_password" class="form-label">Admin Password</label>
+                            <input type="password" class="form-control" id="admin_password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="admin_fullname" class="form-label">Admin Full Name</label>
+                            <input type="text" class="form-control" id="admin_fullname" value="{{ admin_config.FULLNAME }}" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="updateAdminSettings()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Management Modal -->
+    <div class="modal fade" id="userManagementModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">User Management</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Full Name</th>
+                                    <th>Username</th>
+                                    <th>Sites</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for upt in upts %}
+                                <tr>
+                                    <td>{{ upt.id_upt }}</td>
+                                    <td>{{ upt.fullname }}</td>
+                                    <td>{{ upt.username }}</td>
+                                    <td>{{ upt.sites|length }}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="editUpt('{{ upt.id_upt }}', '{{ upt.fullname }}', '{{ upt.username }}', '{{ upt.password }}')">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" onclick="deleteUpt('{{ upt.id_upt }}')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Info Modal -->
+    <div class="modal fade" id="systemInfoModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">System Information</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs" id="systemInfoTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="folders-tab" data-bs-toggle="tab" data-bs-target="#folders" type="button" role="tab" onclick="checkFolders()">
+                                <i class="bi bi-folder me-2"></i>Folders
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="errors-tab" data-bs-toggle="tab" data-bs-target="#errors" type="button" role="tab" onclick="checkErrors()">
+                                <i class="bi bi-exclamation-triangle me-2"></i>Warnings
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="orphaned-tab" data-bs-toggle="tab" data-bs-target="#orphaned" type="button" role="tab" onclick="checkOrphaned()">
+                                <i class="bi bi-folder-x me-2"></i>Orphaned
+                            </button>
+                        </li>
+                    </ul>
+                    <div class="tab-content p-3" id="systemInfoTabsContent">
+                        <div class="tab-pane fade show active" id="folders" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="mb-0">Folder Status</h6>
+                                <button class="btn btn-sm btn-primary" onclick="checkFolders()">
+                                    <i class="bi bi-arrow-clockwise"></i> Refresh
+                                </button>
+                            </div>
+                            <div id="folderStatus" class="list-group">
+                                <!-- Folder status will be loaded here -->
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="errors" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="mb-0">Peringatan Sistem</h6>
+                                <button class="btn btn-sm btn-primary" onclick="checkErrors()">
+                                    <i class="bi bi-arrow-clockwise"></i> Muat Ulang
+                                </button>
+                            </div>
+                            <div id="errorList" class="list-group">
+                                <!-- Errors will be loaded here -->
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="orphaned" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="mb-0">Orphaned Folders</h6>
+                                <button class="btn btn-sm btn-primary" onclick="checkOrphaned()">
+                                    <i class="bi bi-arrow-clockwise"></i> Refresh
+                                </button>
+                            </div>
+                            <div id="orphanedList" class="list-group">
+                                <!-- Orphaned folders will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Theme toggle function
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeButton = document.querySelector('.theme-toggle i');
+            
+            if (html.getAttribute('data-bs-theme') === 'dark') {
+                html.setAttribute('data-bs-theme', 'light');
+                themeButton.classList.remove('bi-sun-fill');
+                themeButton.classList.add('bi-moon-fill');
+                document.cookie = "theme=light; path=/; max-age=31536000"; // Save for 1 year
+            } else {
+                html.setAttribute('data-bs-theme', 'dark');
+                themeButton.classList.remove('bi-moon-fill');
+                themeButton.classList.add('bi-sun-fill');
+                document.cookie = "theme=dark; path=/; max-age=31536000"; // Save for 1 year
+            }
+        }
+
+        // Function to get cookie value
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+
+        // Set initial theme based on cookie
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = getCookie('theme');
+            const html = document.documentElement;
+            const themeButton = document.querySelector('.theme-toggle i');
+            
+            if (savedTheme === 'dark') {
+                html.setAttribute('data-bs-theme', 'dark');
+                themeButton.classList.remove('bi-moon-fill');
+                themeButton.classList.add('bi-sun-fill');
+            } else {
+                html.setAttribute('data-bs-theme', 'light');
+                themeButton.classList.remove('bi-sun-fill');
+                themeButton.classList.add('bi-moon-fill');
+            }
+        });
+
+        // Admin settings update function
+        function updateAdminSettings() {
+            const formData = {
+                username: document.getElementById('admin_username').value,
+                password: document.getElementById('admin_password').value,
+                fullname: document.getElementById('admin_fullname').value
+            };
+
+            fetch('/api/admin/settings', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while updating admin settings');
+            });
+        }
+
+        // UPT Operations
+        function submitAddUpt() {
+            const formData = {
+                id_upt: document.getElementById('id_upt').value,
+                fullname: document.getElementById('fullname').value,
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value
+            };
+
+            fetch('/api/upts', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while adding the UPT');
+            });
+        }
+
+        function editUpt(id_upt, fullname, username, password) {
+            document.getElementById('edit_id_upt').value = id_upt;
+            document.getElementById('edit_fullname').value = fullname;
+            document.getElementById('edit_username').value = username;
+            document.getElementById('edit_password').value = password;
+            new bootstrap.Modal(document.getElementById('editUptModal')).show();
+        }
+
+        function submitEditUpt() {
+            const id_upt = document.getElementById('edit_id_upt').value;
+            const formData = {
+                fullname: document.getElementById('edit_fullname').value,
+                username: document.getElementById('edit_username').value,
+                password: document.getElementById('edit_password').value
+            };
+
+            fetch(`/api/upts/${id_upt}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while updating the UPT');
+            });
+        }
+
+        function deleteUpt(id_upt) {
+            if (confirm('Are you sure you want to delete this UPT?')) {
+                fetch(`/api/upts/${id_upt}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
+                        location.reload();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while deleting the UPT');
+                });
+            }
+        }
+
+        // Site Operations
+        function showAddSiteModal(id_upt) {
+            document.getElementById('site_upt_id').value = id_upt;
+            new bootstrap.Modal(document.getElementById('addSiteModal')).show();
+        }
+
+        function submitAddSite() {
+            const id_upt = document.getElementById('site_upt_id').value;
+            const formData = {
+                id_perangkat: document.getElementById('id_perangkat').value,
+                site_name: document.getElementById('site_name').value,
+                token: document.getElementById('token').value
+            };
+
+            fetch(`/api/upts/${id_upt}/sites`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while adding the site');
+            });
+        }
+
+        function editSite(id_upt, id_perangkat, site_name, token) {
+            document.getElementById('edit_site_upt_id').value = id_upt;
+            document.getElementById('edit_id_perangkat').value = id_perangkat;
+            document.getElementById('edit_site_name').value = site_name;
+            document.getElementById('edit_token').value = token;
+            new bootstrap.Modal(document.getElementById('editSiteModal')).show();
+        }
+
+        function submitEditSite() {
+            const id_upt = document.getElementById('edit_site_upt_id').value;
+            const id_perangkat = document.getElementById('edit_id_perangkat').value;
+            const formData = {
+                site_name: document.getElementById('edit_site_name').value,
+                token: document.getElementById('edit_token').value
+            };
+
+            fetch(`/api/upts/${id_upt}/sites/${id_perangkat}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while updating the site');
+            });
+        }
+
+        function deleteSite(id_upt, id_perangkat) {
+            if (confirm('Are you sure you want to delete this site?')) {
+                fetch(`/api/upts/${id_upt}/sites/${id_perangkat}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
+                        location.reload();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while deleting the site');
+                });
+            }
+        }
+
+        // Token toggle function
+        function toggleToken(button) {
+            const tokenText = button.parentElement.querySelector('.token-text');
+            const icon = button.querySelector('i');
+            
+            if (tokenText.style.display === 'none') {
+                tokenText.style.display = 'inline';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                tokenText.style.display = 'none';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            }
+        }
+
+        // Save folders function
+        function saveFolders() {
+            const toast = document.getElementById('verifyToast');
+            const toastBody = toast.querySelector('.toast-body');
+            const toastHeader = toast.querySelector('.toast-header');
+            const toastIcon = toast.querySelector('.bi');
+            
+            // Show loading state
+            toastHeader.classList.remove('bg-success', 'bg-danger', 'text-white');
+            toastIcon.classList.remove('bi-check-circle', 'bi-exclamation-circle');
+            toastIcon.classList.add('bi-arrow-repeat', 'spinner-border', 'spinner-border-sm');
+            toastBody.innerHTML = '<div class="d-flex align-items-center"><div class="spinner-border spinner-border-sm me-2" role="status"></div>Verifying and updating database...</div>';
+            
+            const bsToast = new bootstrap.Toast(toast, {
+                delay: 5000  // Show for 5 seconds
+            });
+            bsToast.show();
+
+            fetch('/api/verify-database', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Remove loading state
+                toastIcon.classList.remove('bi-arrow-repeat', 'spinner-border', 'spinner-border-sm');
+                
+                if (data.error) {
+                    toastHeader.classList.remove('bg-success');
+                    toastHeader.classList.add('bg-danger', 'text-white');
+                    toastIcon.classList.add('bi-exclamation-circle');
+                    toastBody.textContent = data.error;
+                } else {
+                    toastHeader.classList.remove('bg-danger');
+                    toastHeader.classList.add('bg-success', 'text-white');
+                    toastIcon.classList.add('bi-check-circle');
+                    
+                    let message = 'Database verification complete.';
+                    if (data.updated_sites && data.updated_sites.length > 0) {
+                        message += `<br><br>Updated ${data.updated_sites.length} site IDs to 3 digits:`;
+                        message += `<div class="small mt-2">${data.updated_sites.map(site => 
+                            `<div>${site.old_id} → ${site.new_id}</div>`
+                        ).join('')}</div>`;
+                    }
+                    
+                    if (data.created_folders && data.created_folders.length > 0) {
+                        message += `<br><br>Created ${data.created_folders.length} new folders:`;
+                        message += `<div class="small mt-2">${data.created_folders.map(folder => 
+                            `<div>${folder}</div>`
+                        ).join('')}</div>`;
+                    }
+                    
+                    toastBody.innerHTML = message;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Remove loading state
+                toastIcon.classList.remove('bi-arrow-repeat', 'spinner-border', 'spinner-border-sm');
+                
+                toastHeader.classList.remove('bg-success');
+                toastHeader.classList.add('bg-danger', 'text-white');
+                toastIcon.classList.add('bi-exclamation-circle');
+                toastBody.textContent = 'An error occurred while verifying the database';
+            });
+        }
+
+        function checkFolders() {
+            fetch('/api/verify-folders', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const folderStatus = document.getElementById('folderStatus');
+                folderStatus.innerHTML = '';
+                
+                if (data.message) {
+                    const lines = data.message.split('\n');
+                    lines.forEach(line => {
+                        if (line.trim()) {
+                            const item = document.createElement('div');
+                            item.className = 'list-group-item';
+                            item.innerHTML = `<i class="bi bi-folder me-2"></i>${line}`;
+                            folderStatus.appendChild(item);
+                        }
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function checkErrors() {
+            fetch('/api/system/errors', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const errorList = document.getElementById('errorList');
+                errorList.innerHTML = '';
+                
+                if (data.errors && data.errors.length > 0) {
+                    data.errors.forEach(error => {
+                        const item = document.createElement('div');
+                        item.className = 'list-group-item list-group-item-warning';
+                        item.innerHTML = `
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="bi bi-exclamation-triangle-fill me-2 text-warning"></i>
+                                    <strong class="text-warning">${error.type}</strong>
+                                </div>
+                                <small class="text-muted">${error.timestamp}</small>
+                            </div>
+                            <p class="mb-0 mt-2 text-warning">${error.message}</p>
+                        `;
+                        errorList.appendChild(item);
+                    });
+                } else {
+                    const item = document.createElement('div');
+                    item.className = 'list-group-item list-group-item-success';
+                    item.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>Tidak ada peringatan sistem';
+                    errorList.appendChild(item);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const errorList = document.getElementById('errorList');
+                errorList.innerHTML = `
+                    <div class="list-group-item list-group-item-danger">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        Gagal memuat peringatan sistem
+                    </div>
+                `;
+            });
+        }
+
+        function checkOrphaned() {
+            fetch('/api/system/orphaned', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const orphanedList = document.getElementById('orphanedList');
+                orphanedList.innerHTML = '';
+                
+                if (data.orphaned && data.orphaned.length > 0) {
+                    data.orphaned.forEach(folder => {
+                        const item = document.createElement('div');
+                        item.className = 'list-group-item list-group-item-warning';
+                        item.innerHTML = `
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="bi bi-folder-x me-2"></i>
+                                    <strong>${folder.path}</strong>
+                                </div>
+                                <button class="btn btn-sm btn-danger" onclick="deleteOrphaned('${folder.path}')">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        `;
+                        orphanedList.appendChild(item);
+                    });
+                } else {
+                    const item = document.createElement('div');
+                    item.className = 'list-group-item';
+                    item.innerHTML = '<i class="bi bi-check-circle me-2"></i>No orphaned folders found';
+                    orphanedList.appendChild(item);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function deleteOrphaned(path) {
+            if (confirm(`Are you sure you want to delete ${path}?`)) {
+                fetch('/api/system/orphaned', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ path })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        checkOrphaned();
+                    } else {
+                        alert('Failed to delete folder');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to delete folder');
+                });
+            }
+        }
+
+        // Add event listener for system info modal
+        document.getElementById('systemInfoModal').addEventListener('show.bs.modal', function () {
+            // Load initial data when modal opens
+            checkFolders();
+        });
+
+        // Add these functions to your existing script
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            const sidebarToggle = document.querySelector('.sidebar-toggle');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            if (window.innerWidth <= 768) {
+                // Mobile view
+                sidebar.classList.toggle('show');
+                overlay.classList.toggle('show');
+                
+                if (sidebar.classList.contains('show')) {
+                    sidebarToggle.style.display = 'none';
+                } else {
+                    sidebarToggle.style.display = 'inline-flex';
+                }
+            } else {
+                // Desktop view
+                sidebar.classList.toggle('collapsed');
+                mainContent.classList.toggle('expanded');
+            }
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const sidebarToggle = document.querySelector('.sidebar-toggle');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(event.target) && 
+                !sidebarToggle.contains(event.target) &&
+                sidebar.classList.contains('show')) {
+                sidebar.classList.remove('show');
+                overlay.classList.remove('show');
+                sidebarToggle.style.display = 'inline-flex';
+            }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            const sidebarToggle = document.querySelector('.sidebar-toggle');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('show');
+                overlay.classList.remove('show');
+                sidebarToggle.style.display = 'inline-flex';
+                if (!sidebar.classList.contains('collapsed')) {
+                    mainContent.classList.remove('expanded');
+                }
+            }
+        });
+
+        // Add this to your existing script
+        document.getElementById('uptSearch').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const uptCards = document.querySelectorAll('.upt-card');
+            
+            uptCards.forEach(card => {
+                const title = card.querySelector('.card-title').textContent.toLowerCase();
+                const id = card.querySelector('.text-muted').textContent.toLowerCase();
+                const username = card.querySelector('.card-text').textContent.toLowerCase();
+                const siteNames = Array.from(card.querySelectorAll('.list-group-item strong')).map(el => el.textContent.toLowerCase());
+                
+                if (title.includes(searchTerm) || 
+                    id.includes(searchTerm) || 
+                    username.includes(searchTerm) ||
+                    siteNames.some(site => site.includes(searchTerm))) {
+                    card.closest('.col').style.display = '';
+                } else {
+                    card.closest('.col').style.display = 'none';
+                }
+            });
+        });
+
+        // Content switching function
+        function showContent(contentId) {
+            // Hide all content sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Show the selected content
+            document.getElementById(contentId + 'Content').style.display = 'block';
+            
+            // Update active state in sidebar
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // Close sidebar on mobile after selection
+            if (window.innerWidth <= 768) {
+                toggleSidebar();
+            }
+        }
+    </script>
+</body>
+</html> 

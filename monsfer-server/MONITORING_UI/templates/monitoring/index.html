@@ -1,0 +1,451 @@
+{% extends "layout.html" %}
+
+{% block head %}
+<!-- Load Monitoring V2 CSS -->
+<link href="{{ url_for('static', filename='css/monitoring_v2.css') }}?v={{ range(1, 1000) | random }}" rel="stylesheet">
+{% endblock %}
+
+{% block sidebar_container %}{% endblock %}
+
+{% block content %}
+<div class="sdr-layout" :class="{ 'is-left-collapsed': !isLeftSidebarOpen, 'is-right-collapsed': !isRightSidebarOpen }">
+    
+    <aside class="sidebar-left" v-show="isLeftSidebarOpen">
+        <div class="filter-header">
+            <div class="filter-label">Data Filter</div>
+            <div class="date-navigator">
+                {% raw %}
+                <button type="button" class="nav-btn" @click="prevDate" aria-label="Previous day">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+                <div class="date-display-container">
+                    <span class="date-display">{{ currentDateDisplay }}</span>
+                    <i class="bi bi-calendar3" style="color: #64748b; font-size: 14px;"></i>
+                    <input type="date" class="date-hidden-input" v-model="formattedDate" @change="handleDatePickerChange" aria-label="Select date">
+                </div>
+                <button type="button" class="nav-btn" @click="nextDate" aria-label="Next day">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+                {% endraw %}
+            </div>
+        </div>
+
+        <div class="sidebar-body">
+            <div class="col-data col-data--full">
+                <div class="col-header">Data</div>
+                {% raw %}
+                <div v-if="filteredData.length === 0" class="empty-state">No data available</div>
+                <div v-for="item in filteredData" 
+                     :key="item.filename" 
+                     class="data-item" 
+                     :class="{ active: selectedDataFilename === item.filename }"
+                     @click="handleTimeChangeFromList(item)"
+                     role="button"
+                     tabindex="0">
+                    {{ item.display_time || item.time_label || item.time }}
+                </div>
+                {% endraw %}
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-area">
+        <div class="main-topbar">
+            <div class="main-topbar-left">
+                {% raw %}
+                <button type="button" class="topbar-icon-btn" @click="toggleLeftSidebar" :aria-pressed="(!isLeftSidebarOpen).toString()" :aria-label="isLeftSidebarOpen ? 'Hide filter sidebar' : 'Show filter sidebar'">
+                    <i class="bi" :class="isLeftSidebarOpen ? 'bi-layout-sidebar-inset' : 'bi-layout-sidebar-inset-reverse'" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="topbar-icon-btn" @click="toggleRightSidebar" :aria-pressed="(!isRightSidebarOpen).toString()" :aria-label="isRightSidebarOpen ? 'Hide control sidebar' : 'Show control sidebar'">
+                    <i class="bi" :class="isRightSidebarOpen ? 'bi-sliders' : 'bi-sliders2-vertical'" aria-hidden="true"></i>
+                </button>
+                {% endraw %}
+                <div class="main-title">SDR Spectrum Monitoring</div>
+            </div>
+            <div class="main-meta">
+                {% raw %}
+                <span class="meta-chip" v-if="selectedSubserviceInfo">{{ selectedSubserviceInfo.start_freq }} - {{ selectedSubserviceInfo.stop_freq }} MHz</span>
+                <span class="meta-chip" v-if="selectedSubserviceInfo">{{ selectedSubserviceInfo.name || ('Band ' + selectedSubserviceInfo.band_number) }}</span>
+                <span class="meta-chip meta-chip--muted" v-if="lastUpdated">Updated: {{ lastUpdated }}</span>
+                <button type="button" class="topbar-icon-btn" @click="toggleTheme" :aria-label="theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'" :title="theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'">
+                    <i class="bi" :class="theme === 'dark' ? 'bi-sun' : 'bi-moon'" aria-hidden="true"></i>
+                </button>
+                {% endraw %}
+            </div>
+        </div>
+        
+        <div class="charts-container">
+            <div class="spectrum-panel">
+                <div id="spectrumChart" style="width: 100%; height: 100%;"></div>
+            </div>
+            
+            <div class="waterfall-panel">
+                <div id="waterfallChart" style="width: 100%; height: 100%;"></div>
+            </div>
+        </div>
+    </main>
+
+    <aside class="sidebar-right" aria-label="Controls">
+        <div class="panel-section">
+            <div class="panel-title">Frequency Bands</div>
+            {% raw %}
+            <div class="svc-list">
+                <div v-if="subservices.length === 0" class="strip-loading">No bands available</div>
+                <div v-for="svc in subservices"
+                        :key="svc.band_number"
+                        class="svc-item"
+                        :class="{ active: selectedSubservice === svc.band_number }"
+                        @click="handleSubserviceChangeFromList(svc)"
+                        role="button"
+                        tabindex="0">
+                    <div class="svc-item-main">
+                        <span class="svc-item-name">{{ svc.name || ('Band ' + svc.band_number) }}</span>
+                        <span class="svc-item-range">{{ svc.start_freq }}-{{ svc.stop_freq }} MHz</span>
+                    </div>
+                    <i v-if="selectedSubservice === svc.band_number" class="bi bi-check-circle-fill svc-item-check"></i>
+                </div>
+            </div>
+            {% endraw %}
+        </div>
+
+        <div class="panel-section">
+            <div class="panel-title">View</div>
+            {% raw %}
+            <div class="segmented" role="tablist" aria-label="View mode">
+                <button type="button" class="segmented-btn" :class="{ active: viewMode === 'spectrum_waterfall' }" @click="setViewMode('spectrum_waterfall')">Both</button>
+                <button type="button" class="segmented-btn" :class="{ active: viewMode === 'spectrum' }" @click="setViewMode('spectrum')">Spectrum</button>
+                <button type="button" class="segmented-btn" :class="{ active: viewMode === 'spectrum_3d' }" @click="setViewMode('spectrum_3d')">3D</button>
+            </div>
+            {% endraw %}
+        </div>
+
+        <div class="panel-section">
+            <div class="panel-title">Display</div>
+            {% raw %}
+            <label class="toggle-row">
+                <span class="toggle-label">Grid</span>
+                <input class="toggle-input" type="checkbox" v-model="showGrid">
+            </label>
+            <label class="toggle-row">
+                <span class="toggle-label">Markers</span>
+                <input class="toggle-input" type="checkbox" v-model="showMarkers">
+            </label>
+            <label class="toggle-row">
+                <span class="toggle-label">Auto Scale</span>
+                <input class="toggle-input" type="checkbox" v-model="autoScale">
+            </label>
+            <label class="toggle-row">
+                <span class="toggle-label">Sync Zoom</span>
+                <input class="toggle-input" type="checkbox" v-model="enableZoomSync">
+            </label>
+            {% endraw %}
+        </div>
+
+        <!-- Unit Panel: dBFS / dBm -->
+        <div class="panel-section">
+            <div class="panel-title">Units</div>
+            {% raw %}
+            <div class="segmented" role="group" aria-label="Unit selection" style="margin-bottom:10px;">
+                <button type="button" class="segmented-btn" :class="{ active: unitMode === 'dbfs' }" @click="setUnitMode('dbfs')">dBFS</button>
+                <button type="button" class="segmented-btn" :class="{ active: unitMode === 'dbm' }" @click="setUnitMode('dbm')">dBm</button>
+            </div>
+            <div class="field" v-show="unitMode === 'dbm'">
+                <label class="field-label" for="dbmOffset" title="Offset kalibrasi: nilai yang ditambahkan ke tiap data dBFS untuk mengkonversi menjadi dBm">Calibration Offset (dB)</label>
+                <input id="dbmOffset" class="field-control" type="number" step="0.5" v-model.number="dbmOffset" @change="applyUnitChange">
+                <div style="font-size:10px; color:var(--text-gray); margin-top:4px;">dBm = dBFS + Offset</div>
+            </div>
+            {% endraw %}
+        </div>
+
+        <div class="panel-section">
+            <div class="panel-title">Time Window</div>
+            {% raw %}
+            <div class="field">
+                <label class="field-label" for="timeRangeMode">Range</label>
+                <select id="timeRangeMode" class="field-control" v-model="timeRangeMode">
+                    <option value="1h">1 Hour</option>
+                    <option value="12h">12 Hours</option>
+                    <option value="24h">24 Hours</option>
+                    <option value="7d">7 Days</option>
+                    <option value="custom">Custom</option>
+                </select>
+            </div>
+            <div class="field" v-if="timeRangeMode === 'custom'">
+                <label class="field-label" for="customTimeRange">Custom</label>
+                <input id="customTimeRange" class="field-control" type="text" v-model="customTimeRange" placeholder="e.g. 90m / 2h">
+            </div>
+            {% endraw %}
+        </div>
+
+        <div class="panel-section">
+            <div class="panel-title">Scale</div>
+            {% raw %}
+            <div class="field">
+                <label class="field-label" for="lowerScaleMode">Lower</label>
+                <select id="lowerScaleMode" class="field-control" v-model="lowerScaleMode">
+                    <option value="auto">Auto</option>
+                    <option value="fixed">Fixed</option>
+                </select>
+            </div>
+            <div class="field">
+                <label class="field-label" for="fixedLowerScale">Lower (dB)</label>
+                <input id="fixedLowerScale" class="field-control" type="number" v-model.number="fixedLowerScale" :disabled="lowerScaleMode !== 'fixed'">
+            </div>
+            <div class="field">
+                <label class="field-label" for="upperScaleMode">Upper</label>
+                <select id="upperScaleMode" class="field-control" v-model="upperScaleMode">
+                    <option value="auto">Auto</option>
+                    <option value="fixed">Fixed</option>
+                </select>
+            </div>
+            <div class="field">
+                <label class="field-label" for="fixedUpperScale">Upper (dB)</label>
+                <input id="fixedUpperScale" class="field-control" type="number" v-model.number="fixedUpperScale" :disabled="upperScaleMode !== 'fixed'">
+            </div>
+
+            <button type="button" class="btn-primary" @click="applyScaleSettings" :disabled="viewMode === 'spectrum' || isWaterfallLoading">Apply</button>
+            {% endraw %}
+        </div>
+
+        <div class="panel-section">
+            <div class="panel-title">Markers</div>
+            {% raw %}
+            <div class="marker-actions">
+                <button type="button" class="btn-secondary" @click="addMarkerManual">Add</button>
+                <button type="button" class="btn-secondary" @click="clearMarkers" :disabled="!markers || markers.length === 0">Clear</button>
+            </div>
+            <div style="font-size:10px; color:var(--text-gray); margin-bottom:6px;">
+                <i class="bi bi-arrows-move" style="margin-right:4px;"></i>Drag marker line on chart to move
+            </div>
+            <div class="marker-list">
+                <div v-if="!markers || markers.length === 0" class="empty-state">No markers</div>
+                <div v-for="m in markers" :key="m.id" class="marker-row">
+                    <div class="marker-main">
+                        <div class="marker-f">{{ m.frequency }} MHz</div>
+                        <div class="marker-p">{{ displayPower(m.power) }} {{ unitMode === 'dbm' ? 'dBm' : 'dBFS' }}</div>
+                    </div>
+                    <button type="button" class="icon-btn" @click="removeMarker(m.id)" aria-label="Remove marker">
+                        <i class="bi bi-x-lg" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+            {% endraw %}
+        </div>
+
+        <div class="panel-section">
+            <div class="panel-title">Download</div>
+            <div class="field">
+                <label class="field-label" for="spectrum-download-days">Days (1-30)</label>
+                <input id="spectrum-download-days" class="field-control" type="number" min="1" max="30" value="1">
+            </div>
+            <div class="d-grid gap-2">
+                <button id="spectrum-download-btn" type="button" class="btn-primary">Download Monitoring</button>
+                <button id="wifi-download-btn" type="button" class="btn-primary" style="background-color: var(--secondary) !important;">Download WiFi</button>
+                <button id="system-download-btn" type="button" class="btn-primary" style="background-color: var(--info) !important;">Download System Info</button>
+            </div>
+        </div>
+    </aside>
+
+</div>
+
+<script>
+    // Vue Mixin to inject logic
+    window.pageMixin = window.pageMixin || {};
+    const originalMethods = window.pageMixin.methods || {};
+    const originalData = window.pageMixin.data || function() { return {}; };
+
+    window.pageMixin.data = function() {
+        return {
+            ...originalData.call(this),
+            fixedLowerScale: -110,
+            fixedUpperScale: -30,
+            showGrid: true,
+            showMarkers: true,
+            autoScale: false,
+            selectedDataFilename: null,
+            selectedSubservice: null,
+            isLeftSidebarOpen: true,
+            isRightSidebarOpen: true,
+            // Unit toggle
+            unitMode: localStorage.getItem('sdr_unit_mode') || 'dbfs',
+            dbmOffset: parseFloat(localStorage.getItem('sdr_dbm_offset') || '0')
+        };
+    };
+
+    window.pageMixin.methods = {
+        ...originalMethods,
+        changeDate(days) {
+            if (days < 0) {
+                if (typeof this.prevDate === 'function') this.prevDate();
+                return;
+            }
+            if (typeof this.nextDate === 'function') this.nextDate();
+        },
+        handleTimeChangeFromList(item) {
+            this.selectedDataFilename = item.filename;
+            if (item && typeof this.selectLog === 'function') {
+                this.selectLog(item);
+            } else {
+                this.loadSpectrumData(item.filename);
+            }
+        },
+        handleSubserviceChangeFromList(svc) {
+            this.selectedSubservice = svc.band_number;
+            if (svc && typeof this.showSpectrum === 'function') {
+                this.showSpectrum(svc);
+            }
+        },
+        toggleLeftSidebar() {
+            this.isLeftSidebarOpen = !this.isLeftSidebarOpen;
+            this._resizeChartsAfterLayout();
+        },
+        toggleRightSidebar() {
+            this.isRightSidebarOpen = !this.isRightSidebarOpen;
+            this._resizeChartsAfterLayout();
+        },
+        _resizeChartsAfterLayout() {
+            try {
+                this.$nextTick(() => {
+                    try {
+                        if (this.chart && typeof this.chart.resize === 'function') {
+                            this.chart.resize();
+                        }
+                    } catch (e) {}
+                    try {
+                        if (window.Plotly && window.Plotly.Plots && typeof window.Plotly.Plots.resize === 'function') {
+                            const el = document.getElementById('waterfallChart');
+                            if (el) window.Plotly.Plots.resize(el);
+                        }
+                    } catch (e) {}
+                    try {
+                        window.dispatchEvent(new Event('resize'));
+                    } catch (e) {}
+                });
+            } catch (e) {}
+        },
+        updateChartConfig() {
+            if (this.updateSpectrumChart) this.updateSpectrumChart();
+        },
+        setUnitMode(mode) {
+            this.unitMode = mode;
+            localStorage.setItem('sdr_unit_mode', mode);
+            this.applyUnitChange();
+        },
+        applyUnitChange() {
+            localStorage.setItem('sdr_dbm_offset', String(this.dbmOffset || 0));
+            // Ask chart engine to redraw with new unit
+            if (typeof this.updateSpectrumChart === 'function') this.updateSpectrumChart();
+            // Patch current data y values if chart holds raw ref
+            window.dispatchEvent(new CustomEvent('sdr:unit-changed', {
+                detail: { mode: this.unitMode, offset: parseFloat(this.dbmOffset || 0) }
+            }));
+        },
+        displayPower(rawDbfs) {
+            const v = parseFloat(rawDbfs);
+            if (isNaN(v)) return rawDbfs;
+            if (this.unitMode === 'dbm') {
+                return (v + parseFloat(this.dbmOffset || 0)).toFixed(1);
+            }
+            return v.toFixed(1);
+        }
+    };
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const btn = document.getElementById('spectrum-download-btn');
+        const daysEl = document.getElementById('spectrum-download-days');
+        if (!btn || !daysEl) return;
+        btn.addEventListener('click', function () {
+            btn.disabled = true;
+            try {
+                let days = 1;
+                try { days = parseInt(String(daysEl.value || '1'), 10); } catch (e) { days = 1; }
+                if (!Number.isFinite(days) || days < 1) days = 1;
+                if (days > 30) days = 30;
+                
+                let site = null;
+                if (window.monitoring && typeof window.monitoring.getState === 'function') {
+                    site = window.monitoring.getState().currentSite;
+                }
+                if (!site && sessionStorage) {
+                    site = sessionStorage.getItem('currentSiteName');
+                }
+                const siteParam = site ? `&site=${encodeURIComponent(site)}` : '';
+                
+                const url = `/api/spectrum/download?days=${encodeURIComponent(String(days))}${siteParam}`;
+                window.location.href = url;
+            } finally {
+                setTimeout(() => { btn.disabled = false; }, 800);
+            }
+        });
+        const wifiBtn = document.getElementById('wifi-download-btn');
+        if (wifiBtn) {
+            wifiBtn.addEventListener('click', function () {
+                let days = 1;
+                try { days = parseInt(String(daysEl.value || '1'), 10); } catch (e) { days = 1; }
+                let site = sessionStorage.getItem('currentSiteName');
+                const siteParam = site ? `&site=${encodeURIComponent(site)}` : '';
+                window.location.href = `/api/wifi/download?days=${days}${siteParam}`;
+            });
+        }
+
+        const systemBtn = document.getElementById('system-download-btn');
+        if (systemBtn) {
+            systemBtn.addEventListener('click', function () {
+                let days = 1;
+                try { days = parseInt(String(daysEl.value || '1'), 10); } catch (e) { days = 1; }
+                let site = sessionStorage.getItem('currentSiteName');
+                const siteParam = site ? `&site=${encodeURIComponent(site)}` : '';
+                window.location.href = `/api/system/metrics/download?days=${days}${siteParam}`;
+            });
+        }
+    });
+
+    // Enable direct load of a specific spectrum CSV via URL ?file=/abs/path.csv
+    (function bootstrapDirectSpectrumLoad() {
+        try {
+            const params = new URLSearchParams(window.location.search);
+            const filePath = (params.get('file') || '').trim();
+            if (!filePath) return;
+
+            let attempts = 0;
+            const maxAttempts = 40; // ~8s
+            const tick = setInterval(async () => {
+                attempts += 1;
+                const app = window.monitoring;
+                if (app && app.updateChart && app.updateWaterfallChart) {
+                    clearInterval(tick);
+                    try {
+                        const qs = new URLSearchParams({ file: filePath, maxPoints: '2048' });
+                        const url = `/api/spectrum/file?${qs.toString()}`;
+                        const resp = await fetch(url, { credentials: 'same-origin' });
+                        if (!resp.ok) return;
+                        const spectrumData = await resp.json();
+                        if (!spectrumData || !Array.isArray(spectrumData.data) || spectrumData.data.length === 0) return;
+                        const actualStart = parseFloat(spectrumData.band.actual_start_freq);
+                        const actualStop = parseFloat(spectrumData.band.actual_stop_freq);
+                        const n = spectrumData.data.length;
+                        const step = (actualStop - actualStart) / (n - 1);
+                        const freqs = new Array(n);
+                        for (let i = 0; i < n; i++) freqs[i] = actualStart + (i * step);
+                        freqs[freqs.length - 1] = actualStop;
+
+                        app.currentData = { x: freqs, y: spectrumData.data };
+                        app.selectedData = {
+                            filename: spectrumData.filename,
+                            start_freq: actualStart,
+                            stop_freq: actualStop,
+                            actual_start_freq: actualStart,
+                            actual_stop_freq: actualStop
+                        };
+                        app.lastUpdated = new Date().toLocaleTimeString();
+                        if (app.chart && app.chartInitialized) {
+                            app.updateChart(app.currentData);
+                        }
+                    } catch (e) {}
+                }
+                if (attempts >= maxAttempts) clearInterval(tick);
+            }, 200);
+        } catch (e) {}
+    })();
+</script>
+{% endblock %}

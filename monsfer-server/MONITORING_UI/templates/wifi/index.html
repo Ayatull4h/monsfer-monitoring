@@ -1,0 +1,475 @@
+{% extends "layout.html" %}
+
+{% block head %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    /* WIFI SPECIFIC STYLES */
+    .wifi-container {
+        padding: 24px 32px;
+        max-width: 1600px;
+        margin: 0 auto;
+    }
+
+    /* Page Header */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 32px;
+    }
+
+    .page-title h1 {
+        font-size: 24px;
+        font-weight: 600;
+        margin: 0;
+        color: var(--text-white);
+    }
+
+    .page-title p {
+        margin: 4px 0 0;
+        color: var(--text-gray);
+        font-size: 14px;
+    }
+
+    .btn-scan {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: white;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 8px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: opacity 0.2s;
+        text-decoration: none;
+    }
+    .btn-scan:hover {
+        opacity: 0.9;
+        color: white;
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 24px;
+        margin-bottom: 32px;
+    }
+
+    .stat-card {
+        background: var(--bg-card);
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.05);
+        padding: 20px 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .stat-info .label {
+        color: var(--text-gray);
+        font-size: 13px;
+        margin-bottom: 4px;
+        display: block;
+    }
+
+    .stat-info .value {
+        color: var(--text-white);
+        font-size: 28px;
+        font-weight: 600;
+    }
+
+    .stat-icon {
+        font-size: 24px;
+    }
+    .icon-blue { color: #3b82f6; }
+    .icon-green { color: #22c55e; }
+    .icon-gray { color: #94a3b8; }
+    .icon-yellow { color: #eab308; }
+
+    /* Search Bar */
+    .search-section {
+        margin-bottom: 24px;
+    }
+    .search-input {
+        width: 100%;
+        background: var(--bg-card);
+        border: 1px solid var(--border-dark);
+        padding: 12px 16px;
+        border-radius: 8px;
+        color: white;
+        font-size: 14px;
+    }
+    .search-input:focus {
+        outline: none;
+        border-color: var(--accent-blue);
+    }
+
+    /* Network List */
+    .list-header {
+        color: var(--text-gray);
+        font-size: 14px;
+        margin-bottom: 16px;
+    }
+
+    .network-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .network-card {
+        background: var(--bg-card);
+        border-radius: 12px;
+        border: 1px solid var(--border-dark);
+        padding: 16px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+        flex-wrap: wrap;
+        transition: transform 0.2s;
+        min-width: 0;
+    }
+    .network-card:hover {
+        border-color: #334155;
+    }
+    
+    .network-card.connected {
+        border-color: #1d4ed8;
+        background: rgba(30, 58, 138, 0.2);
+    }
+
+    .net-main {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        flex: 1 1 420px;
+        min-width: 0;
+    }
+
+    .net-icon {
+        color: var(--text-gray);
+        font-size: 20px;
+        margin-top: 2px;
+    }
+    .net-icon.connected { color: var(--accent-blue); }
+
+    .net-info h4 {
+        margin: 0 0 4px 0;
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--text-white);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .badge-connected {
+        background: rgba(59, 130, 246, 0.2);
+        color: var(--accent-blue);
+        font-size: 11px;
+        padding: 2px 8px;
+        border-radius: 12px;
+        border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    .net-meta {
+        font-size: 12px;
+        color: var(--text-gray);
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        row-gap: 6px;
+        min-width: 0;
+    }
+    .net-meta span { opacity: 0.8; }
+
+    .net-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 16px;
+        text-align: left;
+        flex: 1 1 420px;
+        min-width: 280px;
+    }
+
+    .stat-col label {
+        display: block;
+        font-size: 11px;
+        color: var(--text-gray);
+        margin-bottom: 2px;
+    }
+    .stat-col div {
+        font-size: 13px;
+        color: var(--text-white);
+        font-weight: 500;
+    }
+
+    .security-badge {
+        color: var(--success);
+        border: 1px solid rgba(34, 197, 94, 0.3);
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        background: rgba(34, 197, 94, 0.1);
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+    
+    .security-badge.open {
+        color: var(--warning);
+        border-color: rgba(234, 179, 8, 0.3);
+        background: rgba(234, 179, 8, 0.1);
+    }
+
+    .signal-box {
+        text-align: right;
+        margin-left: auto;
+    }
+
+    @media (max-width: 768px) {
+        .wifi-container { padding: 16px; }
+        .stats-grid { gap: 12px; margin-bottom: 16px; }
+        .network-card { padding: 14px 14px; }
+        .net-stats { min-width: 0; }
+        .signal-box { width: 100%; text-align: left; }
+    }
+    .signal-val {
+        color: var(--success);
+        font-weight: 600;
+        font-size: 14px;
+    }
+    .signal-label {
+        font-size: 11px;
+        color: var(--success);
+    }
+    .signal-val.good { color: var(--accent-blue); }
+    .signal-label.good { color: var(--accent-blue); }
+    .signal-val.weak { color: var(--warning); }
+    .signal-label.weak { color: var(--warning); }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="wifi-container">
+    {% raw %}
+    <div class="page-header">
+        <div class="page-title">
+            <h1>WiFi Networks</h1>
+            <p>Daftar jaringan Wifi yang terdeteksi oleh SDR</p>
+        </div>
+        <div style="display: flex; gap: 12px;">
+            <button type="button" class="btn-scan" @click="refreshWifi" :disabled="isWifiLoading" :style="{ opacity: isWifiLoading ? '0.75' : '1' }">
+                <i class="bi bi-arrow-clockwise" :class="{ 'spin-icon': isWifiLoading }"></i> Refresh
+            </button>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-info">
+                <span class="label">Total Networks</span>
+                <div class="value">{{ wifiStats.total }}</div>
+            </div>
+            <div class="stat-icon icon-blue"><i class="bi bi-wifi"></i></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-info">
+                <span class="label">Connected</span>
+                <div class="value">{{ wifiStats.connected }}</div>
+            </div>
+            <div class="stat-icon icon-green"><i class="bi bi-check-circle"></i></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-info">
+                <span class="label">Secured</span>
+                <div class="value">{{ wifiStats.secured }}</div>
+            </div>
+            <div class="stat-icon icon-gray"><i class="bi bi-lock"></i></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-info">
+                <span class="label">Open Networks</span>
+                <div class="value">{{ wifiStats.open }}</div>
+            </div>
+            <div class="stat-icon icon-yellow"><i class="bi bi-unlock"></i></div>
+        </div>
+    </div>
+
+    <!-- Search -->
+    <div class="search-section">
+        <input type="text" class="search-input" v-model="wifiSearchQuery" placeholder="Cari berdasarkan SSID atau BSSID...">
+    </div>
+
+    <!-- List -->
+    <div class="list-header">Detected Networks ({{ filteredNetworks.length }})</div>
+    
+    <div class="network-list">
+        <div v-for="n in filteredNetworks" :key="n.bssid" class="network-card">
+            <div class="net-main">
+                <i class="bi bi-wifi net-icon" :class="{ 'connected': n.connected }"></i>
+                <div class="net-info">
+                    <h4>{{ n.ssid || '<hidden>' }}</h4>
+                    <div class="net-meta">
+                        <span>BSSID: {{ n.bssid || '-' }}</span>
+                        <span>Security: {{ n.security || '-' }}</span>
+                        <span>Last seen: {{ n.last_seen || '-' }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="net-stats">
+                <div class="stat-col">
+                    <label>Channel</label>
+                    <div>{{ n.channel !== null && n.channel !== undefined ? n.channel : '-' }}</div>
+                </div>
+                <div class="stat-col">
+                    <label>Frequency</label>
+                    <div>{{ n.frequency_mhz !== null && n.frequency_mhz !== undefined ? n.frequency_mhz + ' MHz' : '-' }}</div>
+                </div>
+                <div class="stat-col">
+                    <label>Security</label>
+                    <div>
+                        <span v-if="isOpen(n.security)" class="security-badge open">
+                            <i class="bi bi-unlock"></i> Open
+                        </span>
+                        <span v-else class="security-badge">
+                            <i class="bi bi-lock-fill"></i> Secured
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="signal-box">
+                <div class="signal-val" :class="classifySignal(n.signal_dbm).cls">{{ typeof n.signal_dbm === 'number' ? n.signal_dbm + ' dBm' : '-' }}</div>
+                <div class="signal-label" :class="classifySignal(n.signal_dbm).cls">{{ classifySignal(n.signal_dbm).label }}</div>
+            </div>
+        </div>
+
+        <!-- Empty state -->
+        <div v-if="filteredNetworks.length === 0" class="network-card" style="border-style: dashed; opacity: 0.85;">
+            <div class="net-main">
+                <i class="bi bi-info-circle net-icon"></i>
+                <div class="net-info">
+                    <h4>{{ wifiScanPoints.length > 0 ? 'wifi_scan terdeteksi, namun formatnya berupa scan points (freq/power).' : 'Belum ada data wifi_scan untuk site ini.' }}</h4>
+                    <div class="net-meta">
+                        <span>Source: {{ wifiSourceFile || '-' }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endraw %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<style>
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    .spin-icon {
+        display: inline-block;
+        animation: spin 1s linear infinite;
+    }
+</style>
+<script>
+    (function() {
+        'use strict';
+
+        window.pageMixin = {
+            data() {
+                return {
+                    wifiNetworks: [],
+                    wifiScanPoints: [],
+                    wifiSourceFile: null,
+                    wifiSearchQuery: '',
+                    wifiStats: {
+                        total: 0,
+                        connected: 0,
+                        secured: 0,
+                        open: 0
+                    },
+                    isWifiLoading: false
+                };
+            },
+            computed: {
+                filteredNetworks() {
+                    const q = (this.wifiSearchQuery || '').trim().toLowerCase();
+                    return (this.wifiNetworks || []).filter(n => {
+                        const ssid = String(n.ssid || '').toLowerCase();
+                        const bssid = String(n.bssid || '').toLowerCase();
+                        return !q || ssid.includes(q) || bssid.includes(q);
+                    });
+                }
+            },
+            methods: {
+                isOpen(security) {
+                    if (!security) return true;
+                    return String(security).trim().toLowerCase() === 'open' || String(security).trim() === '';
+                },
+                classifySignal(dbm) {
+                    if (typeof dbm !== 'number') return { label: '-', cls: '' };
+                    if (dbm >= -50) return { label: 'Excellent', cls: '' };
+                    if (dbm >= -60) return { label: 'Good', cls: 'good' };
+                    if (dbm >= -70) return { label: 'Fair', cls: 'weak' };
+                    return { label: 'Weak', cls: 'weak' };
+                },
+                async refreshWifi() {
+                    if (this.isWifiLoading) return;
+                    this.isWifiLoading = true;
+                    try {
+                        const site = this.currentSiteName || '';
+                        const url = site ? `/api/wifi/networks?site=${encodeURIComponent(site)}` : '/api/wifi/networks';
+                        const resp = await fetch(url, { credentials: 'same-origin' });
+                        const data = await resp.json();
+                        if (!resp.ok || !data || data.ok !== true) {
+                            throw new Error(data && data.error ? data.error : `HTTP ${resp.status}`);
+                        }
+                        this.wifiNetworks = Array.isArray(data.networks) ? data.networks : [];
+                        this.wifiScanPoints = Array.isArray(data.scan_points) ? data.scan_points : [];
+                        this.wifiSourceFile = data.source_file || null;
+                        
+                        const stats = data.stats || {};
+                        this.wifiStats.total = stats.total !== undefined ? stats.total : this.wifiNetworks.length;
+                        this.wifiStats.connected = '-';
+                        this.wifiStats.secured = stats.secured !== undefined ? stats.secured : '-';
+                        this.wifiStats.open = stats.open !== undefined ? stats.open : '-';
+                    } catch (e) {
+                        console.error("WiFi Refresh Error:", e);
+                        this.wifiNetworks = [];
+                        this.wifiScanPoints = [];
+                        this.wifiSourceFile = null;
+                        this.wifiStats.total = '-';
+                        this.wifiStats.connected = '-';
+                        this.wifiStats.secured = '-';
+                        this.wifiStats.open = '-';
+                    } finally {
+                        this.isWifiLoading = false;
+                    }
+                }
+            },
+            watch: {
+                currentSiteName: {
+                    handler(newSite) {
+                        console.log("WiFi page detected site change to:", newSite);
+                        this.refreshWifi();
+                    },
+                    immediate: true
+                }
+            },
+            mounted() {
+                this.refreshWifi();
+            }
+        };
+    })();
+</script>
+{% endblock %}

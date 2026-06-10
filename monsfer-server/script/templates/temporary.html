@@ -1,0 +1,245 @@
+
+    <!-- Theme Toggle Button -->
+    
+
+    <!-- Add UPT Modal -->
+    
+
+    <!-- Edit UPT Modal -->
+    <div class="modal fade" id="editUptModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit UPT</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editUptForm">
+                        <input type="hidden" id="edit_id_upt">
+                        <div class="mb-3">
+                            <label for="edit_fullname" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="edit_fullname" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="edit_username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="edit_password" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="submitEditUpt()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Site Modal -->
+    <div class="modal fade" id="addSiteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Site</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addSiteForm">
+                        <input type="hidden" id="site_upt_id">
+                        <div class="mb-3">
+                            <label for="id_perangkat" class="form-label">Device ID</label>
+                            <input type="text" class="form-control" id="id_perangkat" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="site_name" class="form-label">Site Name</label>
+                            <input type="text" class="form-control" id="site_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="token" class="form-label">Token</label>
+                            <input type="text" class="form-control" id="token" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="submitAddSite()">Add Site</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Site Modal -->
+    <div class="modal fade" id="editSiteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Site</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editSiteForm">
+                        <input type="hidden" id="edit_site_upt_id">
+                        <input type="hidden" id="edit_id_perangkat">
+                        <div class="mb-3">
+                            <label for="edit_site_name" class="form-label">Site Name</label>
+                            <input type="text" class="form-control" id="edit_site_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_token" class="form-label">Token</label>
+                            <input type="text" class="form-control" id="edit_token" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="submitEditSite()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Settings Modal -->
+    <div class="modal fade" id="adminSettingsModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Admin Settings</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="adminSettingsForm">
+                        <div class="mb-3">
+                            <label for="admin_username" class="form-label">Admin Username</label>
+                            <input type="text" class="form-control" id="admin_username" value="{{ admin_config.USERNAME }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="admin_password" class="form-label">Admin Password</label>
+                            <input type="password" class="form-control" id="admin_password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="admin_fullname" class="form-label">Admin Full Name</label>
+                            <input type="text" class="form-control" id="admin_fullname" value="{{ admin_config.FULLNAME }}" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="updateAdminSettings()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Management Modal -->
+    <div class="modal fade" id="userManagementModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">User Management</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Full Name</th>
+                                    <th>Username</th>
+                                    <th>Sites</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for upt in upts %}
+                                <tr>
+                                    <td>{{ upt.id_upt }}</td>
+                                    <td>{{ upt.fullname }}</td>
+                                    <td>{{ upt.username }}</td>
+                                    <td>{{ upt.sites|length }}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="editUpt('{{ upt.id_upt }}', '{{ upt.fullname }}', '{{ upt.username }}', '{{ upt.password }}')">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" onclick="deleteUpt('{{ upt.id_upt }}')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Info Modal -->
+    <div class="modal fade" id="systemInfoModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">System Information</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs" id="systemInfoTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="folders-tab" data-bs-toggle="tab" data-bs-target="#folders" type="button" role="tab" onclick="checkFolders()">
+                                <i class="bi bi-folder me-2"></i>Folders
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="errors-tab" data-bs-toggle="tab" data-bs-target="#errors" type="button" role="tab" onclick="checkErrors()">
+                                <i class="bi bi-exclamation-triangle me-2"></i>Warnings
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="orphaned-tab" data-bs-toggle="tab" data-bs-target="#orphaned" type="button" role="tab" onclick="checkOrphaned()">
+                                <i class="bi bi-folder-x me-2"></i>Orphaned
+                            </button>
+                        </li>
+                    </ul>
+                    <div class="tab-content p-3" id="systemInfoTabsContent">
+                        <div class="tab-pane fade show active" id="folders" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="mb-0">Folder Status</h6>
+                                <button class="btn btn-sm btn-primary" onclick="checkFolders()">
+                                    <i class="bi bi-arrow-clockwise"></i> Refresh
+                                </button>
+                            </div>
+                            <div id="folderStatus" class="list-group">
+                                <!-- Folder status will be loaded here -->
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="errors" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="mb-0">Peringatan Sistem</h6>
+                                <button class="btn btn-sm btn-primary" onclick="checkErrors()">
+                                    <i class="bi bi-arrow-clockwise"></i> Muat Ulang
+                                </button>
+                            </div>
+                            <div id="errorList" class="list-group">
+                                <!-- Errors will be loaded here -->
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="orphaned" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="mb-0">Orphaned Folders</h6>
+                                <button class="btn btn-sm btn-primary" onclick="checkOrphaned()">
+                                    <i class="bi bi-arrow-clockwise"></i> Refresh
+                                </button>
+                            </div>
+                            <div id="orphanedList" class="list-group">
+                                <!-- Orphaned folders will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

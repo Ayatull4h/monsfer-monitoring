@@ -1,0 +1,28 @@
+{
+  "station_id": "07001",
+  "token": "default",
+  "server_url": "http://localhost:5102",
+  "directories": {
+    "data": "data_capture",
+    "upload": "data_upload",
+    "archive": "data_archive",
+    "logs": "logs"
+  },
+  "network": {
+    "timeout_sec": 10,
+    "retries": 5
+  },
+  "disk_policy": {
+    "max_usage_percent": 85,
+    "min_free_gb": 1.0,
+    "retention_days": 1,
+    "max_archive_size_mb": 500
+  },
+  "intervals": {
+    "health_check": 10,
+    "sync": 10,
+    "cleanup": 60,
+    "acquisition_interval": 5,
+    "wifi_interval": 10
+  }
+}

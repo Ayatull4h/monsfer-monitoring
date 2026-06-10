@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>User Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .btn-xs {
+            padding: 0.15rem 0.4rem;
+            font-size: 0.75rem;
+            line-height: 1;
+            border-radius: 0.2rem;
+            height: 24px;
+        }
+        
+        .btn-xs i {
+            font-size: 0.75rem;
+            line-height: 1;
+        }
+
+        .token-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .token-input {
+            height: 24px;
+            padding: 0.15rem 0.4rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-sm-custom {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            height: 32px;
+        }
+
+        .btn-sm-custom i {
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- User Management Content -->
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <div class="dashboard-header">
+            <h1 class="h2 mb-0">User Management</h1>
+        </div>
+        <div>
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addUptModal">
+                <i class="bi bi-plus-circle"></i> Add User
+            </button>
+        </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-container mb-4">
+        <i class="bi bi-search"></i>
+        <input type="text" class="form-control" id="userSearch" placeholder="Search users by name, ID, or username...">
+    </div>
+
+    <!-- Users Table -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Full Name</th>
+                            <th>Username</th>
+                            <th>Sites</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for upt in upts %}
+                        <tr>
+                            <td>{{ upt.id_upt }}</td>
+                            <td>{{ upt.fullname }}</td>
+                            <td>{{ upt.username }}</td>
+                            <td>
+                                <span class="badge {% if upt.sites|length == 0 %}bg-warning{% else %}bg-primary{% endif %}">{{ upt.sites|length }}</span>
+                                <button class="btn btn-sm btn-link p-0 ms-2" onclick="viewSites('{{ upt.id_upt }}', '{{ upt.fullname }}')">
+                                    <i class="bi bi-eye"></i> View
+                                </button>
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <button class="btn btn-sm btn-outline-primary" onclick="editUpt('{{ upt.id_upt }}', '{{ upt.fullname }}', '{{ upt.username }}', '{{ upt.password }}')">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteUpt('{{ upt.id_upt }}')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-success" onclick="showAddSiteModal('{{ upt.id_upt }}')">
+                                        <i class="bi bi-plus-circle"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sites Modal -->
+    <div class="modal fade" id="sitesModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Sites for <span id="uptNameInModal"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <div class="search-container w-50">
+                            <i class="bi bi-search"></i>
+                            <input type="text" class="form-control" id="siteSearch" placeholder="Search sites...">
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm-custom btn-outline-secondary" onclick="toggleAllTokens()">
+                                <i class="bi bi-eye-slash"></i> View Token
+                            </button>
+                            <button class="btn btn-sm-custom btn-success" onclick="showAddSiteModal()">
+                                <i class="bi bi-plus-circle"></i> Add Site
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="sitesTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Site Name</th>
+                                    <th>Token</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sitesTableBody">
+                                <!-- Sites will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="noSitesMessage" class="text-center py-4" style="display: none;">
+                        <i class="bi bi-folder-x fs-1 text-muted"></i>
+                        <p class="mt-2">No sites found for this UPT</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Site Modal -->
+    <div class="modal fade" id="addSiteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Site</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addSiteForm">
+                        <input type="hidden" id="site_upt_id">
+                        <div class="mb-3">
+                            <label for="id_perangkat" class="form-label">Device ID</label>
+                            <input type="text" class="form-control" id="id_perangkat" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="site_name" class="form-label">Site Name</label>
+                            <input type="text" class="form-control" id="site_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="token" class="form-label">Token</label>
+                            <input type="text" class="form-control" id="token" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="submitAddSite()">Add Site</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Site Modal -->
+    <div class="modal fade" id="editSiteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Site</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editSiteForm">
+                        <input type="hidden" id="edit_site_upt_id">
+                        <input type="hidden" id="edit_id_perangkat">
+                        <div class="mb-3">
+                            <label for="edit_site_name" class="form-label">Site Name</label>
+                            <input type="text" class="form-control" id="edit_site_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_token" class="form-label">Token</label>
+                            <input type="text" class="form-control" id="edit_token" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="submitEditSite()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Anti-tampering protection for view source only
+        if (window.location.href.indexOf('view-source:') !== -1) {
+            document.documentElement.innerHTML = '<body style="display:flex;justify-content:center;align-items:center;height:100vh;margin:0;font-family:Arial,sans-serif;font-size:24px;color:#333;"><div>what are u lookin for?</div></body>';
+        }
+
+        // User search functionality
+        document.getElementById('userSearch').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('tbody tr');
+            
+            rows.forEach(row => {
+                const id = row.cells[0].textContent.toLowerCase();
+                const name = row.cells[1].textContent.toLowerCase();
+                const username = row.cells[2].textContent.toLowerCase();
+                
+                if (id.includes(searchTerm) || 
+                    name.includes(searchTerm) || 
+                    username.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        // Site search functionality
+        document.getElementById('siteSearch').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('#sitesTableBody tr');
+            
+            rows.forEach(row => {
+                const id = row.cells[0].textContent.toLowerCase();
+                const name = row.cells[1].textContent.toLowerCase();
+                
+                if (id.includes(searchTerm) || name.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        async function viewSites(id_upt, fullname) {
+            try {
+                // Update modal title and store UPT ID
+                const titleElement = document.getElementById('uptNameInModal');
+                titleElement.textContent = fullname;
+                titleElement.setAttribute('data-upt-id', id_upt);
+                
+                // Read the JSON file directly
+                const response = await fetch('/api/direct/read-sites', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ id_upt })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load sites');
+                }
+                
+                const data = await response.json();
+                const sites = data.sites;
+                
+                // Update modal content
+                const sitesList = document.getElementById('sitesTableBody');
+                sitesList.innerHTML = '';
+                
+                if (sites && sites.length > 0) {
+                    sitesList.innerHTML = '';
+                    document.getElementById('noSitesMessage').style.display = 'none';
+                    
+                    sites.forEach(site => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${site.id_perangkat}</td>
+                            <td>${site.site_name}</td>
+                            <td>
+                                <div class="token-container">
+                                    <input type="password" value="${site.token}" readonly class="token-input">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <button onclick="editSite('${id_upt}', '${site.id_perangkat}', '${site.site_name}', '${site.token}')" class="btn btn-xs btn-outline-primary">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button onclick="deleteSite('${id_upt}', '${site.id_perangkat}')" class="btn btn-xs btn-outline-danger">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        `;
+                        sitesList.appendChild(row);
+                    });
+                } else {
+                    sitesList.innerHTML = '';
+                    document.getElementById('noSitesMessage').style.display = 'block';
+                }
+                
+                // Show modal using Bootstrap
+                new bootstrap.Modal(document.getElementById('sitesModal')).show();
+            } catch (error) {
+                console.error('Error loading sites:', error);
+                alert('Failed to load sites. Please try again.');
+            }
+        }
+
+        // Function to show add site modal
+        function showAddSiteModal() {
+            const id_upt = document.getElementById('uptNameInModal').getAttribute('data-upt-id');
+            document.getElementById('site_upt_id').value = id_upt;
+            new bootstrap.Modal(document.getElementById('addSiteModal')).show();
+        }
+
+        // Function to submit add site
+        async function submitAddSite() {
+            const id_upt = document.getElementById('site_upt_id').value;
+            const formData = {
+                id_perangkat: document.getElementById('id_perangkat').value,
+                site_name: document.getElementById('site_name').value,
+                token: document.getElementById('token').value
+            };
+
+            if (!formData.id_perangkat || !formData.site_name || !formData.token) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/direct/add-site', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        id_upt: id_upt,
+                        ...formData
+                    })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to add site');
+                }
+
+                // Close the modal
+                bootstrap.Modal.getInstance(document.getElementById('addSiteModal')).hide();
+                
+                // Refresh the sites list
+                viewSites(id_upt, document.getElementById('uptNameInModal').textContent);
+                
+                // Clear form
+                document.getElementById('id_perangkat').value = '';
+                document.getElementById('site_name').value = '';
+                document.getElementById('token').value = '';
+                
+                alert('Site added successfully');
+            } catch (error) {
+                console.error('Error:', error);
+                alert(error.message || 'An error occurred while adding the site');
+            }
+        }
+
+        // Function to toggle all tokens
+        function toggleAllTokens() {
+            const tokenInputs = document.querySelectorAll('.token-input');
+            const toggleButton = document.querySelector('button[onclick="toggleAllTokens()"]');
+            const icon = toggleButton.querySelector('i');
+            const isShowing = tokenInputs[0]?.type === 'password';
+            
+            tokenInputs.forEach(input => {
+                input.type = isShowing ? 'text' : 'password';
+            });
+            
+            icon.classList.remove(isShowing ? 'bi-eye' : 'bi-eye-slash');
+            icon.classList.add(isShowing ? 'bi-eye-slash' : 'bi-eye');
+        }
+
+        async function editSite(id_upt, siteId, siteName, token) {
+            // Populate edit form
+            document.getElementById('edit_site_upt_id').value = id_upt;
+            document.getElementById('edit_id_perangkat').value = siteId;
+            document.getElementById('edit_site_name').value = siteName;
+            document.getElementById('edit_token').value = token;
+            
+            // Show edit modal
+            new bootstrap.Modal(document.getElementById('editSiteModal')).show();
+        }
+
+        async function updateSite() {
+            const id_upt = window.currentEditValues.id_upt;
+            const oldSiteId = window.currentEditValues.id_perangkat;
+            const newSiteId = document.getElementById('edit_site_upt_id').value;
+            const newSiteName = document.getElementById('edit_site_name').value;
+            const newToken = document.getElementById('edit_token').value;
+            
+            if (!newSiteId || !newSiteName || !newToken) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/direct/update-site', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id_upt,
+                        id_perangkat: newSiteId,
+                        site_name: newSiteName,
+                        token: newToken
+                    })
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to update site');
+                }
+                
+                // Close edit modal
+                document.getElementById('editSiteModal').style.display = 'none';
+                
+                // Refresh sites list
+                viewSites(id_upt);
+                
+                alert('Site updated successfully');
+            } catch (error) {
+                console.error('Error updating site:', error);
+                alert(error.message || 'Failed to update site. Please try again.');
+            }
+        }
+
+        async function deleteSite(id_upt, siteId) {
+            if (!confirm('Are you sure you want to delete this site? This action cannot be undone.')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/direct/delete-site', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id_upt,
+                        id_perangkat: siteId
+                    })
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to delete site');
+                }
+                
+                // Refresh sites list
+                viewSites(id_upt);
+                
+                alert('Site deleted successfully');
+            } catch (error) {
+                console.error('Error deleting site:', error);
+                alert(error.message || 'Failed to delete site. Please try again.');
+            }
+        }
+
+        // Function to submit edit site
+        function submitEditSite() {
+            const id_upt = document.getElementById('edit_site_upt_id').value;
+            const id_perangkat = document.getElementById('edit_id_perangkat').value;
+            const formData = {
+                site_name: document.getElementById('edit_site_name').value,
+                token: document.getElementById('edit_token').value
+            };
+
+            // Direct JSON file operation
+            fetch('/api/direct/update-site', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id_upt: id_upt,
+                    id_perangkat: id_perangkat,
+                    ...formData
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    // Close the modal
+                    bootstrap.Modal.getInstance(document.getElementById('editSiteModal')).hide();
+                    
+                    // Refresh the sites list if the sites modal is open
+                    const sitesModal = document.getElementById('sitesModal');
+                    if (sitesModal.classList.contains('show')) {
+                        viewSites(id_upt, document.getElementById('uptNameInModal').textContent);
+                    } else {
+                        // Otherwise refresh the page
+                        location.reload();
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while updating the site');
+            });
+        }
+    </script>
+</body>
+</html> 

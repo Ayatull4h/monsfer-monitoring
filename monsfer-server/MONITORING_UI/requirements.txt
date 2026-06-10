@@ -1,0 +1,15 @@
+Flask
+Flask-Cors
+Flask-WTF
+python-dotenv
+numpy
+pandas
+psutil
+Werkzeug
+Jinja2
+itsdangerous
+click
+MarkupSafe
+python-dateutil
+pytz
+six

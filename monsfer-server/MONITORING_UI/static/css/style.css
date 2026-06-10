@@ -1,0 +1,331 @@
+/* Global Theme Variables - Industrial Emerald Theme */
+:root {
+    /* Primary Colors (Emerald variations) */
+    --primary-color: #10b981;       /* Emerald */
+    --primary-hover: #059669;       /* Darker Emerald */
+    --primary-light: rgba(16, 185, 129, 0.1);
+    --primary-bg: rgba(16, 185, 129, 0.05);
+    
+    /* Secondary Colors */
+    --secondary-color: #64748b;     /* Slate Gray */
+    --success-color: #10b981;       /* Emerald */
+    --info-color: #0ea5e9;          /* Sky Blue */
+    --warning-color: #f59e0b;       /* Amber */
+    --danger-color: #ef4444;        /* Red */
+    
+    /* Neutral Colors - Default (Light Mode) */
+    --light-color: #f8fafc;         /* Slate 50 */
+    --dark-color: #0f172a;          /* Slate 900 */
+    --body-bg: #ffffff;             /* White background for light mode */
+    --card-bg: #ffffff;             /* White */
+    --border-color: #e2e8f0;        /* Slate 200 */
+    
+    /* Text Colors */
+    --text-primary: #000000;        /* Black text for light mode */
+    --text-secondary: #334155;      /* Slate 700 */
+    --text-muted: #64748b;          /* Slate 500 */
+    
+    /* Layout */
+    --sidebar-width: 300px;
+    --header-height: 56px;
+    --radius: 12px;
+    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+    --shadow-md: 0 10px 30px rgba(2, 8, 23, 0.08);
+    --transition-base: all 0.2s ease-in-out;
+}
+
+:root[data-theme="dark"] {
+    --primary-color: #10b981;
+    --primary-hover: #059669;
+    --primary-light: rgba(16, 185, 129, 0.15);
+    --primary-bg: rgba(16, 185, 129, 0.1);
+    --body-bg: #0a0a0a;
+    --card-bg: #161616;
+    --border-color: rgba(255, 255, 255, 0.12);
+    --text-primary: #e5e5e5;
+    --text-secondary: #a3a3a3;
+    --text-muted: #737373;
+}
+
+/* Base Layout & Typography */
+body {
+    background-color: var(--body-bg);
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color: var(--text-primary);
+    overflow-x: hidden;
+    padding-top: var(--header-height);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Card Styling - Clean & Bright */
+.card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 1.5rem;
+    transition: var(--transition-base);
+}
+
+.card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: #cbd5e1;
+}
+
+.card-header {
+    background-color: transparent;
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 1.25rem;
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--text-primary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-body {
+    padding: 1.25rem;
+}
+
+/* Navbar Enhancements - Blue Theme */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--text-primary);
+}
+
+.nav-link {
+    color: var(--text-secondary);
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--text-primary);
+}
+
+/* Sidebar Container (Global) */
+.sidebar-container {
+    position: fixed;
+    right: 0;
+    top: var(--app-topbar-height, var(--header-height));
+    bottom: 0;
+    width: var(--sidebar-width);
+    background: var(--card-bg);
+    border-left: 1px solid var(--border-color);
+    box-shadow: -2px 0 5px rgba(0,0,0,0.02);
+    z-index: 1000;
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+}
+
+.sidebar-container.collapsed {
+    transform: translateX(calc(var(--sidebar-width) - 20px));
+}
+
+.sidebar-toggle-btn {
+    position: absolute;
+    left: -15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 60px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-right: none;
+    border-radius: 8px 0 0 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.02);
+    z-index: 1001;
+    color: var(--secondary-color);
+}
+
+.sidebar-toggle-btn:hover {
+    color: var(--primary-color);
+    background: var(--primary-light);
+}
+
+/* Content Container Adjustment */
+.content-container {
+    margin-right: 0;
+    transition: margin-right 0.3s ease;
+    height: calc(100vh - var(--app-topbar-height, var(--header-height)));
+    width: auto;
+    display: block; /* Override flex */
+    overflow-y: auto;
+}
+
+/* Adjust when sidebar is collapsed (via JS class on body or container) */
+.has-sidebar .content-container {
+    margin-right: var(--sidebar-width);
+}
+
+.has-sidebar.sidebar-collapsed .content-container {
+    margin-right: 20px;
+}
+
+/* Monitoring Page Specifics */
+.monitoring-layout {
+    display: flex;
+    height: 100%;
+    overflow: hidden;
+    background: var(--card-bg);
+}
+
+.left-panel {
+    background: var(--card-bg);
+    border-right: 1px solid var(--border-color);
+}
+
+/* List Items - Blue Highlight */
+.list-item {
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+    color: var(--text-secondary);
+}
+
+.list-item:hover {
+    background-color: var(--primary-light);
+    color: var(--primary-color);
+}
+
+.list-item.active {
+    background-color: var(--primary-bg);
+    color: var(--primary-color);
+    border-left-color: var(--primary-color);
+    font-weight: 600;
+}
+
+/* Vue Cloak */
+[v-cloak] {
+    display: none !important;
+}
+
+/* Scrollbar Styling - Delegated to modern-ui.css or use vars */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+}
+
+/* Form Elements */
+.form-control, .form-select {
+    border-color: var(--border-color);
+    color: var(--text-primary);
+    border-radius: 10px;
+    background-color: var(--card-bg);
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* Buttons */
+.btn {
+    font-weight: 500;
+    border-radius: 10px;
+    padding: 0.375rem 0.75rem;
+    transition: var(--transition-base);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+}
+
+.btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Specific component overrides */
+.panel-header {
+    background-color: var(--bg-main);
+    color: var(--text-secondary);
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.subservice-item {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.subservice-item:hover {
+    background-color: var(--primary-light);
+}
+
+.subservice-title {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+/* Context Menu */
+.context-menu {
+    position: absolute;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    z-index: 9999;
+    padding: 5px 0;
+    min-width: 150px;
+}
+
+.context-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.context-menu li {
+    padding: 8px 15px;
+    font-size: 14px;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.context-menu li:hover {
+    background-color: var(--primary-light);
+    color: var(--primary-color);
+}

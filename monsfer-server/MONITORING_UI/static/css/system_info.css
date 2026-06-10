@@ -1,0 +1,1032 @@
+/* System Info page custom styles - layout only, no content changes */
+
+.sysinfo-page {
+  position: relative;
+}
+
+/* Force horizontal layout: two columns side-by-side */
+.sysinfo-page .charts-row {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: 8px;
+}
+
+.sysinfo-section .section-content .info-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+/* Progressive enhancement: jika browser mendukung CSS Grid, gunakan grid 3:1 */
+/* On very small screens, allow wrap to two rows but keep items horizontal by default */
+@media (max-width: 768px) {
+  .sysinfo-page .charts-row { grid-template-columns: repeat(2, 1fr); }
+  .sysinfo-section .section-content .info-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.chart-card {
+  min-height: 160px; /* grafik lebih ringkas agar konten padat */
+}
+
+.system-info p {
+  margin-bottom: 8px;
+}
+
+/* Non-sticky: kolom kiri ikut scroll biasa */
+@media (min-width: 992px) {
+  .sticky-col {
+    position: static;
+    top: auto;
+    align-self: auto;
+  }
+  /* align cards neatly on large screens */
+  .content-container .row.g-3 > [class*="col-"] .card {
+    height: 100%;
+  }
+}
+
+/* Remove sticky/column behavior and unify to horizontal blocks */
+.right-col { border-left: none; }
+
+/* Dashboard Styles */
+.dashboard-page {
+  padding: 20px 0;
+}
+
+.page-header {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.page-title h2 {
+  margin: 0;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.subtitle {
+  margin: 4px 0 0 0;
+  font-size: 14px;
+}
+
+.header-meta {
+  font-size: 14px;
+}
+
+.header-meta span {
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: var(--bg-panel);
+}
+
+.header-meta strong {
+  font-weight: 600;
+}
+
+/* Summary Cards */
+.summary-cards {
+  margin-bottom: 24px;
+}
+
+.summary-card {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.summary-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+.summary-card .card-body {
+  padding: 0;
+}
+
+.summary-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  margin-bottom: 12px;
+}
+
+.summary-card h5 {
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.summary-card .value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.summary-card .change {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Site Cards Grid */
+.sites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.site-card {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border: none;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.site-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+.site-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #28a745, #20c997);
+}
+
+.site-card.offline::before {
+  background: linear-gradient(90deg, #dc3545, #fd7e14);
+}
+
+.site-header {
+  display: flex;
+  justify-content: between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.site-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-online {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-offline {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.site-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.metric {
+  text-align: center;
+  padding: 12px;
+  background: var(--bg-panel);
+  border-radius: 8px;
+}
+
+.metric-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: block;
+}
+
+.metric-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.site-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--text-secondary);
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color);
+}
+
+.last-update {
+  font-size: 11px;
+}
+
+/* System Summary */
+.system-summary {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border: none;
+}
+
+.system-summary h5 {
+  margin-bottom: 20px;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.summary-item:last-child {
+  border-bottom: none;
+}
+
+.summary-item .label {
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.summary-item .value {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .dashboard-page {
+    padding: 16px 0;
+  }
+  
+  .sites-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .site-metrics {
+    grid-template-columns: 1fr;
+  }
+  
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .header-meta {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+/* Status Indicators */
+.status-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+  animation: pulse 2s infinite;
+}
+
+.status-indicator.online {
+  background: #28a745;
+}
+
+.status-indicator.offline {
+  background: #dc3545;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Dashboard styles removed */
+
+.site-card.online {
+  border-left: 4px solid #10b981;
+}
+
+.site-card.offline {
+  border-left: 4px solid #ef4444;
+}
+
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.site-name {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.site-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.status-indicator.online {
+  background-color: #10b981;
+}
+
+.status-indicator.offline {
+  background-color: #ef4444;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.site-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.metric-item {
+  text-align: center;
+  padding: 0.75rem;
+  background: var(--bg-panel);
+  border-radius: 0.375rem;
+}
+
+.metric-label {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.metric-value {
+  display: block;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.metric-unit {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+.site-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.site-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-site-action {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  border-radius: 0.25rem;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-site-action:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: #9ca3af;
+}
+
+/* System Summary */
+.summary-section {
+  margin-top: 2rem;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.summary-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.summary-icon {
+  font-size: 2rem;
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 0.5rem;
+}
+
+.summary-content {
+  flex: 1;
+}
+
+.summary-title {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0 0 0.25rem 0;
+}
+
+.summary-value {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sites-overview {
+    grid-template-columns: 1fr;
+  }
+  
+  .site-metrics {
+    grid-template-columns: 1fr;
+  }
+  
+  .summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .header-meta {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .site-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .site-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
+
+/* Loading States */
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid #e5e7eb;
+  border-top: 2px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Error States */
+.error-message {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+  text-align: center;
+}
+
+/* Success States */
+.success-message {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #16a34a;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+  text-align: center;
+}
+
+/* Hilangkan header pada kartu System Information agar lebih ringkas */
+.right-col .card-header { display: none; }
+
+/* Reduce spacing for a cleaner, compact look */
+.container-fluid.mt-3 {
+  margin-top: 8px !important;
+}
+
+.card-header h5,
+.card-header h4 {
+  margin: 0;
+}
+.card-header h6 { margin: 0; }
+
+/* Ensure the right column widgets stack nicely */
+#system-info-app .row.g-3 > .col-12 {
+  margin-bottom: 0;
+}
+
+/* Hide uncompiled Vue sections */
+[v-cloak] { display: none; }
+
+/* ===== Minimalist & Elegant Theme Enhancements ===== */
+:root {
+  --accent: #3b82f6;       /* primary accent */
+  --accent-dark: #2563eb;  /* accent hover */
+  --border: #eaeef5;       /* subtle borders */
+  --bg-soft: #f8fafc;      /* soft header bg */
+  --text-muted: #64748b;   /* muted text */
+}
+
+/* Card refinement */
+.card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.06);
+}
+
+.card-header {
+  background-color: var(--bg-soft);
+  border-bottom: 1px solid var(--border);
+  padding: 6px 10px;
+}
+
+/* Lighten the heavy blue header on the filter card without changing its markup */
+#system-info-app .card .card-header.bg-primary {
+  background-color: #eef4ff !important;
+  color: #1f4dbb !important;
+  border-bottom-color: var(--border) !important;
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  border-radius: 6px;
+}
+.btn-primary:hover {
+  background-color: var(--accent-dark);
+  border-color: var(--accent-dark);
+}
+
+/* Inputs */
+.form-control {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.form-control:focus {
+  box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.15);
+  border-color: var(--accent);
+}
+/* Form compact spacing */
+.form-group {
+  margin-bottom: 8px;
+}
+
+/* Metrics styling for a clean, minimal look */
+#system-info-app .card-body .card-title {
+  color: #111827;
+  font-weight: 600;
+  font-size: 13px;
+}
+#system-info-app .card-body h2 {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  margin-bottom: 4px;
+}
+#system-info-app .text-muted {
+  color: var(--text-muted) !important;
+}
+
+/* Right column (System Information) compact spacing */
+.right-col .card-body .system-info p {
+  margin-bottom: 4px;
+}
+.right-col .badge {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+/* Card body compact padding */
+.card-body {
+  padding: 10px !important;
+}
+.right-col .card-body {
+  padding: 10px 12px !important;
+}
+
+/* Reduce white space between status cards */
+#system-info-app .row.mb-3,
+#system-info-app .row.g-3 {
+  row-gap: 6px;
+}
+
+/* Padatkan container internal kiri */
+.sysinfo-page #system-info-app .container-fluid.mt-0 {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Ensure status tiles line up horizontally */
+#system-info-app .row.g-2.mb-2 {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+#system-info-app .row.g-2.mb-2 > [class*="col-"] {
+  width: 100% !important;
+  max-width: none !important;
+  flex: 0 0 auto !important;
+}
+
+/* Kompakkan tampilan System Information pada kolom kanan */
+.right-col .system-info p {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  line-height: 1.3;
+}
+.right-col .system-info p strong {
+  color: #334155;
+  font-weight: 600;
+  font-size: 12px;
+}
+.right-col .system-info p span {
+  color: #111827;
+  font-size: 12px;
+}
+
+/* Kecilkan header dan teks untuk tampilan elegan ringkas */
+.right-col .card-header h6,
+.right-col .card-header h5 {
+  font-size: 13px;
+  font-weight: 600;
+}
+.right-col .system-info {
+  font-size: 12px;
+}
+
+/* Kecilkan margin antar kartu */
+.card { margin-bottom: 8px; }
+.sysinfo-page {
+  max-width: 1400px; /* batasi lebar maksimum agar tidak terlalu melebar di layar ultra-wide */
+  margin: 0 auto;
+}
+/* ===== Additional compact overrides appended for denser layout ===== */
+/* Lebihkan kerapatan tile status dengan menyembunyikan caption sekunder */
+#system-info-app .row.g-2.mb-2 .card-body p.text-muted { display: none; }
+
+/* Daftar System Information lebih rapat dan sejajar label-nilai */
+.sysinfo-list { list-style: none; padding: 0; margin: 0; display: grid; row-gap: 4px; }
+.sysinfo-list li { display: flex; justify-content: space-between; align-items: center; }
+.sysinfo-list .label { color: var(--text-muted); font-size: 12px; }
+.sysinfo-list .value { font-size: 12px; color: #111827; text-align: right; }
+
+/* Kecilkan header & body padding agar kartu tampak lebih padat */
+.card-header h5 { font-size: 14px; margin: 0; }
+.card-header { padding: 6px 10px; }
+.card-body { padding: 10px !important; }
+
+/* Hilangkan deskripsi sekunder pada tile status untuk tampilan lebih padat */
+#system-info-app .row.g-2.mb-2 .card-body p.text-muted { display: none; }
+
+/* Tata letak daftar System Information agar lebih rapat */
+.sysinfo-list { list-style: none; padding: 0; margin: 0; display: grid; row-gap: 4px; }
+.sysinfo-list .label { color: var(--text-muted); font-size: 12px; }
+.sysinfo-list .value { font-size: 12px; color: #111827; text-align: right; }
+
+/* Kecilkan header grafik dan rapatkan */
+.card-header h5 { font-size: 14px; margin: 0; }
+
+/* ===== Modern Header & Containers ===== */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.06);
+  margin-bottom: 10px;
+}
+.page-title h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+.page-title .subtitle {
+  margin: 2px 0 0 0;
+  font-size: 12px;
+}
+.header-meta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.header-meta .last-update {
+  font-size: 12px;
+}
+
+/* Badges refinement (keeps Bootstrap badges compatible) */
+.badge {
+  background-color: #eef4ff;
+  color: #1f4dbb;
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-weight: 600;
+}
+.badge.success { background-color: #d1fae5; color: #065f46; }
+.badge.error { background-color: #fee2e2; color: #991b1b; }
+
+/* ===== Donut widgets base styles ===== */
+.donut-container {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.donut-chart {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  position: relative;
+}
+.donut-chart::after {
+  content: "";
+  position: absolute;
+  inset: 24px;
+  background: var(--bg-card);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+.donut-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #0f172a;
+}
+.donut-legend {
+  display: grid;
+  row-gap: 4px;
+}
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+.legend-color { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+
+/* ===== Section containers (pemisah) & size enhancements ===== */
+/* Pemisah kontainer agar tiap bagian terasa tegas, modern, dan elegan */
+.section-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.08);
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.section-header {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.section-content { padding-top: 2px; }
+
+/* Perbesar item System Information agar mengisi ruang kosong dengan tetap ringkas */
+.sysinfo-section .info-grid .info-item {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px;
+}
+.sysinfo-section .info-grid .info-label {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+.sysinfo-section .info-grid .info-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* Perbesar judul kartu di Health Monitor agar lebih prominent */
+.card .card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+/* Perlebar padding kartu grafik untuk nuansa lapang dan elegan */
+.charts-row .card {
+  padding: 12px;
+}
+
+/* Besarkan donut agar tidak menyisakan banyak ruang kosong */
+.donut-chart {
+  width: 150px;
+  height: 150px;
+}
+.donut-chart::after { inset: 32px; }
+.donut-center { font-size: 14px; }
+
+/* Responsif: di layar kecil tetap nyaman dibaca */
+@media (max-width: 768px) {
+  .donut-chart { width: 120px; height: 120px; }
+  .donut-chart::after { inset: 24px; }
+}
+/* ===== Section separators & size enhancements (modern, elegan) ===== */
+.section-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.08);
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.section-header {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.section-content { padding-top: 2px; }
+
+/* Perbesar tile System Information agar mengisi ruang kosong */
+.sysinfo-section .info-grid .info-item {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px;
+}
+.sysinfo-section .info-grid .info-label { color: var(--text-muted); font-size: 13px; }
+.sysinfo-section .info-grid .info-value { font-size: 14px; font-weight: 600; color: #0f172a; }
+
+/* Perbesar judul kartu di Health Monitor */
+.card .card-title { font-size: 14px; font-weight: 600; color: #111827; margin-bottom: 8px; }
+
+/* Perlebar padding kartu grafik agar lega namun tetap padat */
+.charts-row .card { padding: 12px; }
+
+/* Besarkan donut charts agar tidak menyisakan banyak ruang kosong */
+.donut-chart { width: 150px; height: 150px; }
+.donut-chart::after { inset: 32px; }
+.donut-center { font-size: 14px; }
+
+/* Responsif: di layar kecil tetap nyaman dibaca */
+@media (max-width: 768px) {
+  .donut-chart { width: 120px; height: 120px; }
+  .donut-chart::after { inset: 24px; }
+}
+/* ===== UX polish: larger elements & blue accents ===== */
+/* Enlarge donut to further reduce whitespace on wide screens */
+.donut-chart { width: 300px; height: 300px; }
+.donut-chart::after { inset: 60px; }
+.donut-center { font-size: 18px; }
+
+/* Section headers: subtle blue accent for modern, elegan feel */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 10px;
+  padding: 8px 10px;
+  background: #eef4ff; /* soft blue */
+  border: 1px solid #e3ecff; /* blue-ish border */
+  border-radius: 8px;
+}
+.section-header::before {
+  content: ;
+  width: 6px;
+  height: 18px;
+  background: var(--accent);
+  border-radius: 3px;
+  display: inline-block;
+}
+
+/* Make System Information tiles a bit larger */
+.sysinfo-section .info-grid .info-item { padding: 12px; }
+.sysinfo-section .info-grid .info-label { font-size: 14px; }
+.sysinfo-section .info-grid .info-value { font-size: 16px; }
+
+/* Card titles more prominent */
+.card .card-title { font-size: 16px; }
+
+/* Responsive tweak: on small screens, keep donut reasonable size */
+@media (max-width: 768px) {
+  .donut-chart { width: 180px; height: 180px; }
+  .donut-chart::after { inset: 36px; }
+  .donut-center { font-size: 16px; }
+}

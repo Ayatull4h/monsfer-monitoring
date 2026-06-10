@@ -1,0 +1,101 @@
+# Radio Spectrum Monitoring Dashboard - Project Explanation
+
+## Project Overview
+This project is a web-based dashboard for monitoring radio spectrum data. It provides real-time visualization of spectrum data, historical analysis, and device management capabilities. The dashboard is built using Flask (Python) for the backend and Vue.js for the frontend.
+
+## Project Structure
+```
+NEW_MONITORING_UI/
+├── app.py                 # Main Flask application
+├── requirements.txt       # Python dependencies
+├── static/               # Static files
+│   ├── css/
+│   │   └── style.css     # Main stylesheet
+│   └── js/
+│       └── app.js        # Vue.js application
+├── templates/            # HTML templates
+│   ├── layout.html       # Base layout template
+│   ├── top_menu.html     # Navigation menu
+│   ├── index.html        # Main dashboard
+│   └── monitoring/       # Monitoring section templates
+└── data/                 # Data directory
+    └── ambon/           # Ambon location data
+        └── ambon_1/     # Device 1 data
+            └── spectrum/ # Spectrum data files
+```
+
+## Key Features
+1. Real-time Spectrum Visualization
+   - Interactive spectrum chart
+   - Waterfall chart display
+   - Marker management system
+
+2. Data Management
+   - Date-based filtering
+   - Automatic data loading
+   - Historical data viewing
+
+3. User Interface
+   - Collapsible spectrum options panel
+   - Responsive design
+   - Intuitive navigation
+
+## Recent Changes and Implementations
+
+### 1. Data Filtering System
+- Removed time range selection
+- Implemented automatic filtering on date selection
+- Added file-based data loading from data/ambon/ambon_1/spectrum/
+- Formatted time display in HH:MM:SS format
+
+### 2. Spectrum Options Panel
+- Implemented collapsible panel with smooth transitions
+- Added toggle button with proper positioning
+- Created marker management system
+- Improved visual styling and responsiveness
+
+### 3. CSS Improvements
+- Fixed toggle button positioning
+- Implemented proper container collapsing
+- Added smooth transitions
+- Improved responsive design
+
+### 4. Vue.js Implementation
+- Added data filtering methods
+- Implemented automatic data loading
+- Created marker management system
+- Added chart update functionality
+
+## Technical Details
+
+### Backend (Flask)
+- Serves static files and templates
+- Provides API endpoints for data access
+- Handles file system operations for spectrum data
+- Manages data formatting and delivery
+
+### Frontend (Vue.js)
+- Manages application state
+- Handles user interactions
+- Updates charts and visualizations
+- Implements data filtering and display
+
+### Data Structure
+- Spectrum data files are stored in CSV format
+- Filenames follow pattern: YYYY-MM-DD_HH-MM-SS.csv
+- Data is automatically loaded based on selected date
+- Time is displayed in 24-hour format
+
+## Future Improvements
+1. Add more visualization options
+2. Implement data export functionality
+3. Add user authentication
+4. Improve error handling
+5. Add data analysis tools
+
+## Usage Instructions
+1. Select a date to view spectrum data
+2. Use the spectrum options panel to configure display
+3. Add markers to track specific frequencies
+4. Toggle between different view modes
+5. Collapse/expand the options panel as needed 

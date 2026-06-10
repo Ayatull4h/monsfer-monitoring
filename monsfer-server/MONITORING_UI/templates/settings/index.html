@@ -1,0 +1,617 @@
+{% extends "layout.html" %}
+
+{% block head %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    /* SETTINGS SPECIFIC STYLES */
+    .settings-container {
+        padding: 24px 32px;
+        max-width: 1600px;
+        margin: 0 auto;
+    }
+
+    /* Page Header */
+    .page-header {
+        margin-bottom: 32px;
+    }
+
+    .page-title h1 {
+        font-size: 24px;
+        font-weight: 600;
+        margin: 0;
+        color: var(--text-white);
+    }
+
+    .page-title p {
+        margin: 4px 0 0;
+        color: var(--text-gray);
+        font-size: 14px;
+    }
+
+    /* Settings Cards */
+    .settings-card {
+        background: var(--bg-card);
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.05);
+        padding: 24px;
+        margin-bottom: 24px;
+    }
+
+    .card-header-flex {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+    }
+
+    .card-title h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0 0 4px 0;
+        color: var(--text-white);
+    }
+    
+    .card-title p {
+        font-size: 13px;
+        color: var(--text-gray);
+        margin: 0;
+    }
+
+    .status-badge {
+        background: rgba(34, 197, 94, 0.1);
+        color: var(--success);
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        border: 1px solid rgba(34, 197, 94, 0.2);
+    }
+
+    /* Controls */
+    .btn-stop {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--danger);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s;
+        cursor: pointer;
+    }
+    .btn-stop:hover {
+        background: rgba(239, 68, 68, 0.2);
+    }
+
+    .btn-stop:focus-visible {
+        outline: 2px solid var(--accent-blue);
+        outline-offset: 2px;
+    }
+
+    .control-row {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+    }
+
+    .control-text {
+        font-size: 13px;
+        color: var(--text-gray);
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+    }
+
+    .form-group label {
+        display: block;
+        color: var(--text-gray);
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+
+    .form-control-dark {
+        background: var(--bg-main);
+        border: 1px solid var(--border-dark);
+        color: var(--text-white);
+        padding: 10px 12px;
+        border-radius: 6px;
+        width: 100%;
+        font-size: 14px;
+    }
+    .form-control-dark:focus {
+        outline: none;
+        border-color: var(--accent-blue);
+    }
+
+    .form-control-dark:focus-visible {
+        outline: 2px solid rgba(59, 130, 246, 0.55);
+        outline-offset: 2px;
+    }
+
+    .note-text {
+        font-size: 12px;
+        color: var(--text-gray);
+        opacity: 0.7;
+        margin-top: 8px;
+    }
+
+    /* Toggles */
+    .toggle-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px;
+        background: var(--bg-main);
+        border-radius: 8px;
+        margin-bottom: 12px;
+        border: 1px solid var(--border-dark);
+    }
+
+    .toggle-info h4 {
+        font-size: 14px;
+        color: var(--text-white);
+        margin: 0 0 4px 0;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .toggle-info p {
+        margin: 0;
+        font-size: 12px;
+        color: var(--text-gray);
+    }
+
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 44px;
+        height: 24px;
+    }
+
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-color: var(--text-gray);
+        transition: .4s;
+        border-radius: 24px;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: var(--bg-card);
+        transition: .4s;
+        border-radius: 50%;
+    }
+
+    input:checked + .slider {
+        background-color: var(--accent-blue);
+    }
+
+    input:checked + .slider:before {
+        transform: translateX(20px);
+    }
+    
+    .icon-small { font-size: 14px; color: var(--accent-blue); }
+
+    @media (max-width: 768px) {
+        .settings-container { padding: 16px; }
+        .form-grid { grid-template-columns: 1fr; gap: 12px; }
+        .settings-card { padding: 16px; }
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="settings-container">
+    <!-- Header -->
+    <div class="page-header">
+        <div class="page-title">
+            <h1>Settings</h1>
+            <p>Konfigurasi sistem dan perangkat SDR</p>
+        </div>
+    </div>
+
+    <div class="settings-card" style="padding: 16px 24px;">
+        <div class="card-header-flex" style="margin-bottom: 0;">
+            <div class="card-title">
+                <h3>Site Target</h3>
+                <p>Pilih site untuk konfigurasi</p>
+            </div>
+            <div style="display:flex; gap:12px; align-items:center;">
+                <select id="settings-site" class="form-control-dark" style="min-width: 260px;"></select>
+                <button id="save-settings-btn" class="btn-stop" style="background: var(--accent-blue); color: white; border: none;">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SDR Control -->
+    <div class="settings-card">
+        <div class="card-header-flex">
+            <div class="card-title">
+                <h3>SDR Control</h3>
+                <p>Kontrol perangkat SDR receiver</p>
+            </div>
+            <span id="receiver-status" class="status-badge">Running</span>
+        </div>
+
+        <div class="control-row">
+            <button id="receiver-toggle" class="btn-stop" type="button">
+                <i class="bi bi-stop-fill"></i> Stop Receiver
+            </button>
+            <span id="receiver-range" class="control-text">Receiving frequency data from 87.5 to 960 MHz</span>
+        </div>
+    </div>
+
+    <!-- Heartbeat Settings -->
+    <div class="settings-card">
+        <div class="card-header-flex">
+            <div class="card-title">
+                <h3>Heartbeat Settings</h3>
+                <p>Konfigurasi monitoring status perangkat</p>
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 24px;">
+            <label>Heartbeat Interval (seconds)</label>
+            <input id="heartbeat-interval" type="number" class="form-control-dark" value="30">
+            <p class="note-text" style="margin-top: 4px;">Interval untuk memeriksa status online/offline perangkat (5-300 detik)</p>
+        </div>
+
+        <div class="toggle-row">
+            <div class="toggle-info">
+                <h4><i class="bi bi-activity icon-small"></i> Auto Restart on Failure</h4>
+                <p>Restart SDR otomatis jika terdeteksi offline</p>
+            </div>
+            <label class="toggle-switch">
+                <input id="auto-restart" type="checkbox" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="toggle-row">
+            <div class="toggle-info">
+                <h4><i class="bi bi-journal-text icon-small"></i> Enable System Logging</h4>
+                <p>Simpan log aktivitas sistem dan anomali</p>
+            </div>
+            <label class="toggle-switch">
+                <input id="enable-logging" type="checkbox" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+    
+    <!-- Appearance -->
+    <div class="settings-card">
+        <div class="card-header-flex">
+            <div class="card-title">
+                <h3>Appearance</h3>
+                <p>Sesuaikan tampilan aplikasi</p>
+            </div>
+        </div>
+        <div class="form-group" style="margin-bottom: 16px;">
+            <label>Theme</label>
+            <div style="display: flex; gap: 12px;">
+                 <button id="theme-dark-btn" class="btn-stop" onclick="applyTheme('dark')" style="background: var(--accent-blue); color: white; border: none;">Dark Mode</button>
+                 <button id="theme-light-btn" class="btn-stop" onclick="applyTheme('light')" style="background: transparent; color: var(--text-gray); border: 1px solid var(--border-dark);">Light Mode</button>
+            </div>
+            <p class="note-text" style="margin-top: 8px;">Pilih tampilan gelap atau terang untuk seluruh aplikasi.</p>
+        </div>
+
+        <div class="form-group">
+            <label>Satuan Level Sinyal Default</label>
+            <div style="display: flex; gap: 12px;">
+                <button id="unit-dbfs-btn" class="btn-stop" onclick="applyDefaultUnit('dbfs')" style="background: var(--accent-blue); color: white; border: none;">dBFS</button>
+                <button id="unit-dbm-btn" class="btn-stop" onclick="applyDefaultUnit('dbm')" style="background: transparent; color: var(--text-gray); border: 1px solid var(--border-dark);">dBm</button>
+            </div>
+            <p class="note-text" style="margin-top: 8px;">Pilih satuan default yang ditampilkan di halaman Monitoring. Bisa diubah sewaktu-waktu di panel Monitoring.</p>
+        </div>
+
+        <div class="form-group" id="dbm-offset-group" style="display:none; margin-top:12px;">
+            <label>Default Calibration Offset (dB)</label>
+            <input id="settings-dbm-offset" type="number" step="0.5" class="form-control-dark" style="max-width:180px;" value="0">
+            <p class="note-text" style="margin-top:4px;">Offset kalibrasi untuk konversi dBFS → dBm. Nilai ini akan tersimpan di browser.</p>
+            <button class="btn-stop" onclick="saveDefaultUnit()" style="background: var(--accent-blue); color: white; border: none; margin-top: 10px;">Simpan Offset</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // Appearance helpers
+    function applyTheme(theme) {
+        const app = window.monitoring || window.__vueApp;
+        // Try to call toggleTheme on the Vue app
+        const vueinst = document.getElementById('app') && document.getElementById('app').__vue__;
+        if (vueinst && typeof vueinst.setTheme === 'function') { vueinst.setTheme(theme); }
+        else if (vueinst && vueinst.theme !== undefined) {
+            vueinst.theme = theme;
+            try { document.documentElement.setAttribute('data-theme', theme); } catch(e) {}
+            try { localStorage.setItem('sdr_theme', theme); } catch(e) {}
+        } else {
+            try { document.documentElement.setAttribute('data-theme', theme); } catch(e) {}
+            try { localStorage.setItem('sdr_theme', theme); } catch(e) {}
+        }
+        document.getElementById('theme-dark-btn').style.background = theme === 'dark' ? 'var(--accent-blue)' : 'transparent';
+        document.getElementById('theme-dark-btn').style.color = theme === 'dark' ? 'white' : 'var(--text-gray)';
+        document.getElementById('theme-dark-btn').style.border = theme === 'dark' ? 'none' : '1px solid var(--border-dark)';
+        document.getElementById('theme-light-btn').style.background = theme === 'light' ? 'var(--accent-blue)' : 'transparent';
+        document.getElementById('theme-light-btn').style.color = theme === 'light' ? 'white' : 'var(--text-gray)';
+        document.getElementById('theme-light-btn').style.border = theme === 'light' ? 'none' : '1px solid var(--border-dark)';
+    }
+
+    function applyDefaultUnit(unit) {
+        localStorage.setItem('sdr_unit_mode', unit);
+        document.getElementById('dbm-offset-group').style.display = unit === 'dbm' ? 'block' : 'none';
+        document.getElementById('unit-dbfs-btn').style.background = unit === 'dbfs' ? 'var(--accent-blue)' : 'transparent';
+        document.getElementById('unit-dbfs-btn').style.color = unit === 'dbfs' ? 'white' : 'var(--text-gray)';
+        document.getElementById('unit-dbfs-btn').style.border = unit === 'dbfs' ? 'none' : '1px solid var(--border-dark)';
+        document.getElementById('unit-dbm-btn').style.background = unit === 'dbm' ? 'var(--accent-blue)' : 'transparent';
+        document.getElementById('unit-dbm-btn').style.color = unit === 'dbm' ? 'white' : 'var(--text-gray)';
+        document.getElementById('unit-dbm-btn').style.border = unit === 'dbm' ? 'none' : '1px solid var(--border-dark)';
+    }
+
+    function saveDefaultUnit() {
+        const offset = document.getElementById('settings-dbm-offset').value;
+        localStorage.setItem('sdr_dbm_offset', offset);
+        alert('Offset tersimpan: ' + offset + ' dB');
+    }
+
+    // Init state on load
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedUnit = localStorage.getItem('sdr_unit_mode') || 'dbfs';
+        applyDefaultUnit(savedUnit);
+        const savedOffset = localStorage.getItem('sdr_dbm_offset') || '0';
+        const offsetInput = document.getElementById('settings-dbm-offset');
+        if (offsetInput) offsetInput.value = savedOffset;
+    });
+</script>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    (function () {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        const baseHeaders = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        };
+        if (csrfToken) {
+            baseHeaders['X-CSRF-Token'] = csrfToken;
+            baseHeaders['X-CSRFToken'] = csrfToken;
+        }
+
+        const els = {
+            siteSelect: document.getElementById('settings-site'),
+            saveButton: document.getElementById('save-settings-btn'),
+            receiverStatus: document.getElementById('receiver-status'),
+            receiverToggle: document.getElementById('receiver-toggle'),
+            receiverRange: document.getElementById('receiver-range'),
+            heartbeat: document.getElementById('heartbeat-interval'),
+            autoRestart: document.getElementById('auto-restart'),
+            enableLogging: document.getElementById('enable-logging')
+        };
+
+        const state = {
+            sites: [],
+            currentSite: '',
+            currentOwner: '',
+            settings: null,
+            busy: false
+        };
+
+        function setBusy(busy) {
+            state.busy = !!busy;
+            if (els.saveButton) els.saveButton.disabled = state.busy;
+            if (els.receiverToggle) els.receiverToggle.disabled = state.busy;
+        }
+
+        function apiFetch(url, options) {
+            const opts = options || {};
+            const headers = Object.assign({}, baseHeaders, (opts.headers || {}));
+            return fetch(url, Object.assign({}, opts, { headers, credentials: 'same-origin' }));
+        }
+
+        function renderReceiverStatus() {
+            const s = state.settings || {};
+            const running = !!s.receiver_running;
+            if (els.receiverStatus) {
+                els.receiverStatus.textContent = running ? 'Running' : 'Stopped';
+                els.receiverStatus.style.background = running ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)';
+                els.receiverStatus.style.color = running ? 'var(--success)' : 'var(--danger)';
+                els.receiverStatus.style.borderColor = running ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)';
+            }
+            if (els.receiverToggle) {
+                els.receiverToggle.innerHTML = running
+                    ? '<i class="bi bi-stop-fill"></i> Stop Receiver'
+                    : '<i class="bi bi-play-fill"></i> Start Receiver';
+            }
+            if (els.receiverRange) {
+                const start = s.freq_start_mhz != null ? s.freq_start_mhz : 87.5;
+                const end = s.freq_end_mhz != null ? s.freq_end_mhz : 960;
+                els.receiverRange.textContent = running
+                    ? `Receiving frequency data from ${start} to ${end} MHz`
+                    : `Receiver stopped (range ${start} to ${end} MHz)`;
+            }
+        }
+
+        function renderSettingsForm() {
+            const s = state.settings || {};
+            if (els.heartbeat) els.heartbeat.value = s.heartbeat_interval_sec != null ? s.heartbeat_interval_sec : 30;
+            if (els.autoRestart) els.autoRestart.checked = !!s.auto_restart_on_failure;
+            if (els.enableLogging) els.enableLogging.checked = !!s.enable_system_logging;
+            renderReceiverStatus();
+        }
+
+        async function loadSites() {
+            try {
+                const resp = await apiFetch('/api/user/sites', { method: 'GET' });
+                const data = await resp.json();
+                state.sites = Array.isArray(data.sites) ? data.sites : [];
+            } catch (e) {
+                state.sites = [];
+            }
+
+            if (!els.siteSelect) return;
+            els.siteSelect.innerHTML = '';
+            if (!state.sites.length) {
+                const opt = document.createElement('option');
+                opt.value = 'plamongan_indah';
+                opt.textContent = 'Plamongan Indah';
+                els.siteSelect.appendChild(opt);
+                state.currentSite = opt.value;
+                state.currentOwner = '';
+                return;
+            }
+
+            state.sites.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = (s.site_name || '').toString();
+                opt.textContent = (s.display_name || s.site_name || '').toString();
+                opt.dataset.owner = (s.username || '').toString();
+                els.siteSelect.appendChild(opt);
+            });
+
+            const current = els.siteSelect.value || (state.sites[0].site_name || '');
+            els.siteSelect.value = current;
+            state.currentSite = current;
+            const selected = els.siteSelect.selectedOptions && els.siteSelect.selectedOptions[0];
+            state.currentOwner = selected ? (selected.dataset.owner || '') : '';
+        }
+
+        async function selectSiteInSession(siteName, owner) {
+            const payload = { site_name: siteName };
+            if (owner) payload.username = owner;
+            await apiFetch('/api/user/select-site', { method: 'POST', body: JSON.stringify(payload) });
+        }
+
+        async function loadSettings() {
+            if (!state.currentSite) return;
+            setBusy(true);
+            try {
+                await selectSiteInSession(state.currentSite, state.currentOwner);
+                const resp = await apiFetch(`/api/settings?site=${encodeURIComponent(state.currentSite)}`, { method: 'GET' });
+                const data = await resp.json();
+                if (!resp.ok || !data || data.ok !== true) {
+                    const msg = (data && data.error) ? data.error : 'Gagal memuat settings';
+                    alert(msg);
+                    return;
+                }
+                state.settings = data.settings || null;
+                renderSettingsForm();
+            } catch (e) {
+                alert('Gagal memuat settings');
+            } finally {
+                setBusy(false);
+            }
+        }
+
+        function collectSettingsPayload() {
+            // Frequency range is no longer editable, use current settings or defaults
+            const s = state.settings || {};
+            const freqStart = s.freq_start_mhz != null ? s.freq_start_mhz : 87.5;
+            const freqEnd = s.freq_end_mhz != null ? s.freq_end_mhz : 960;
+            const hb = els.heartbeat ? Number(els.heartbeat.value) : 30;
+            return {
+                site: state.currentSite,
+                settings: {
+                    freq_start_mhz: freqStart,
+                    freq_end_mhz: freqEnd,
+                    heartbeat_interval_sec: hb,
+                    auto_restart_on_failure: els.autoRestart ? !!els.autoRestart.checked : true,
+                    enable_system_logging: els.enableLogging ? !!els.enableLogging.checked : true
+                }
+            };
+        }
+
+        async function saveSettings() {
+            if (!state.currentSite) return;
+            setBusy(true);
+            try {
+                const payload = collectSettingsPayload();
+                const resp = await apiFetch('/api/settings', { method: 'POST', body: JSON.stringify(payload) });
+                const data = await resp.json();
+                if (!resp.ok || !data || data.ok !== true) {
+                    const msg = (data && data.error) ? data.error : 'Gagal menyimpan settings';
+                    alert(msg);
+                    return;
+                }
+                state.settings = data.settings || state.settings;
+                renderSettingsForm();
+            } catch (e) {
+                alert('Gagal menyimpan settings');
+            } finally {
+                setBusy(false);
+            }
+        }
+
+        async function toggleReceiver() {
+            if (!state.currentSite) return;
+            setBusy(true);
+            try {
+                const running = state.settings ? !!state.settings.receiver_running : true;
+                const action = running ? 'stop' : 'start';
+                const resp = await apiFetch('/api/sdr/control', {
+                    method: 'POST',
+                    body: JSON.stringify({ site: state.currentSite, action })
+                });
+                const data = await resp.json();
+                if (!resp.ok || !data || data.ok !== true) {
+                    const msg = (data && data.error) ? data.error : 'Gagal mengubah status receiver';
+                    alert(msg);
+                    return;
+                }
+                if (!state.settings) state.settings = {};
+                state.settings.receiver_running = !!data.receiver_running;
+                renderReceiverStatus();
+            } catch (e) {
+                alert('Gagal mengubah status receiver');
+            } finally {
+                setBusy(false);
+            }
+        }
+
+        if (els.siteSelect) {
+            els.siteSelect.addEventListener('change', async function () {
+                const selected = els.siteSelect.selectedOptions && els.siteSelect.selectedOptions[0];
+                state.currentSite = els.siteSelect.value;
+                state.currentOwner = selected ? (selected.dataset.owner || '') : '';
+                await loadSettings();
+            });
+        }
+        if (els.saveButton) {
+            els.saveButton.addEventListener('click', saveSettings);
+        }
+        if (els.receiverToggle) {
+            els.receiverToggle.addEventListener('click', toggleReceiver);
+        }
+
+        (async function init() {
+            await loadSites();
+            await loadSettings();
+        })();
+    })();
+</script>
+{% endblock %}

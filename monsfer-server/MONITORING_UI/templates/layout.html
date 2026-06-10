@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<script>
+    (function () {
+        try {
+            var stored = null;
+            try { stored = localStorage.getItem('monsfer_theme'); } catch (e) {}
+            var theme = stored === 'light' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {}
+    })();
+</script>
+<script>
+    window.__MONSFER_PREVIEW_MODE = "{{ 'true' if preview_mode else 'false' }}" === "true";
+    (function () {
+        try {
+            if (window.__MONSFER_PREVIEW_MODE === true) {
+                document.documentElement.setAttribute('data-preview', 'true');
+            }
+        } catch (e) {}
+    })();
+</script>
+<script>
+    window.__MONSFER_AUTHENTICATED = {{ 'true' if session.get('user_data') else 'false' }};
+</script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="csrf-param" content="csrf_token">
+    <meta name="theme-color" content="#050810">
+    <title>MONSFER DASHBOARD</title>
+    <!-- Hint browser to avoid caching dynamic templates too aggressively -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/bootstrap-icons.css') }}?v=1002" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}?v=1002" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/modern-ui.css') }}?v=1004" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/header-overrides.css') }}?v=1004" rel="stylesheet">
+    <script defer src="{{ url_for('static', filename='js/components/vue.js') }}"></script>
+    <script defer src="{{ url_for('static', filename='js/components/axios.js') }}"></script>
+    
+    <style>
+        :root {
+            --app-topbar-height: 112px;
+        }
+        /* [v-cloak] { display: none !important; } */
+        
+        /* Transition for page content */
+        .fade-enter-active, .fade-leave-active { transition: opacity 0.3s; }
+        .fade-enter, .fade-leave-to { opacity: 0; }
+    </style>
+    <!-- ResizeObserver polyfill for older browsers (ensures Plotly resizes reliably) -->
+    <script>
+        (function(){
+            if (typeof ResizeObserver === 'undefined') {
+                var s = document.createElement('script');
+                s.src = 'https://cdn.jsdelivr.net/npm/resize-observer-polyfill@1.5.1/dist/ResizeObserver.global.js';
+                document.head.appendChild(s);
+            }
+        })();
+    </script>
+    <script>
+        // Fallback: if Vue fails to remove v-cloak on the content container, force-remove it
+        document.addEventListener('DOMContentLoaded', function(){
+            try {
+                // Wait slightly to give Vue a chance to mount
+                setTimeout(function() {
+                    var cc = document.querySelector('.content-container');
+                    if (cc && cc.hasAttribute('v-cloak')) cc.removeAttribute('v-cloak');
+                }, 1000);
+            } catch (e) {}
+        });
+    </script>
+    {% block head %}{% endblock %}
+    <style>
+        /* 
+         * Global Layout Corrections 
+         * Ensure full height coverage and eliminate white gaps
+         */
+        :root {
+            --app-topbar-height: 104px; /* 56px Top + 48px Nav */
+            --bg-main: #0b1121; /* Deep Dark Blue */
+        }
+
+        html[data-theme="light"] {
+            --bg-main: #ffffff;
+        }
+
+        body { 
+            padding-top: var(--app-topbar-height); 
+            background-color: var(--bg-main); 
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        html, body { 
+            width: 100%; 
+            height: 100%;
+            background-color: var(--bg-main) !important; /* Force override any browser default */
+        }
+
+        #app, .content-container { 
+            width: 100%; 
+            min-height: 100%;
+            background-color: var(--bg-main);
+        }
+
+        .app-shell { 
+            width: 100vw; 
+            max-width: 100vw; 
+            min-height: calc(100vh - var(--app-topbar-height)); 
+            padding: 0; 
+            margin: 0;
+            background-color: var(--bg-main); 
+        }
+
+        .main-content { 
+            width: 100%; 
+            height: 100%; 
+            min-width: 0;
+            background-color: var(--bg-main);
+        }
+
+        /* Fix potential white flash on load */
+        [v-cloak] { display: none; }
+        
+        .copyright-overlay {
+            position: fixed;
+            bottom: 5px;
+            left: 5px;
+            background-color: rgba(0, 0, 0, 0.3);
+            color: rgba(255, 255, 255, 0.7);
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            z-index: 9999;
+            pointer-events: none;
+            font-family: Arial, sans-serif;
+        }
+        #global-error-banner {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: #ef4444;
+            color: white;
+            text-align: center;
+            padding: 8px;
+            z-index: 10000;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+    <script>
+        window.onerror = function(msg, url, line, col, error) {
+            var banner = document.getElementById('global-error-banner');
+            if (banner) {
+                banner.style.display = 'block';
+                banner.innerText = 'JS Error: ' + msg + ' at ' + url + ':' + line;
+            }
+            return false;
+        };
+        window.addEventListener('unhandledrejection', function(event) {
+            var banner = document.getElementById('global-error-banner');
+            if (banner) {
+                banner.style.display = 'block';
+                banner.innerText = 'Promise Error: ' + event.reason;
+            }
+        });
+    </script>
+</head>
+{% set _ep = request.endpoint or '' %}
+<body class="{% if _ep == 'monitoring' %}has-sidebar{% endif %}" :class="{ 'sidebar-collapsed': isSidebarCollapsed }">
+    <div id="global-error-banner"></div>
+    <div id="app">
+        {% include 'top_menu.html' %}
+        <div class="content-container" v-cloak>
+            {% set _show_sidebar = (_ep == 'monitoring') %}
+            <div class="app-shell d-flex">
+                <div class="main-content flex-grow-1 w-100">
+                    {% block content %}{% endblock %}
+                </div>
+
+                {% if _show_sidebar %}
+                {% block sidebar_container %}
+                <div class="sidebar-container" :class="{ 'collapsed': isSidebarCollapsed }">
+                    <button class="sidebar-toggle-btn" @click="toggleOptions">
+                        <i :class="isSidebarCollapsed ? 'bi bi-chevron-left' : 'bi bi-chevron-right'"></i>
+                    </button>
+            
+                    <div class="sidebar-content" v-show="!isSidebarCollapsed">
+                        {% block sidebar %}{% endblock %}
+                    </div>
+                </div>
+                {% endblock %}
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="copyright-overlay">
+            © MONSFER 2025
+        </div>
+    </div>
+
+    <script defer src="{{ url_for('static', filename='js/components/bootstrap.js') }}?v=6"></script>
+    <!-- Provide safe global fallbacks for System Info bindings to prevent ReferenceError during initial render -->
+    <script defer src="{{ url_for('static', filename='js/sysinfo-globals.js') }}?v=105"></script>
+    {% block scripts %}{% endblock %}
+    <!-- Cache-busting versi JS agar klien selalu mengambil file terbaru -->
+    <script defer src="{{ url_for('static', filename='js/app.js') }}?v=122"></script>
+    <!-- ECharts & Plotly loaded dynamically via app.js helper, but we keep core libs if needed -->
+  </body>
+</html>

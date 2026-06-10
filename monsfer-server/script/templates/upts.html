@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <main class="col-md-12">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">{{ lang_manager.get_text('upt.title') }}</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <button type="button" class="btn btn-sm btn-outline-primary" id="addUptBtn">
+                        <i class="fas fa-plus"></i> {{ lang_manager.get_text('upt.add') }}
+                    </button>
+                </div>
+            </div>
+
+            <!-- UPTs List -->
+            <div class="table-responsive">
+                <table class="table table-striped table-sm">
+                    <thead>
+                        <tr>
+                            <th>{{ lang_manager.get_text('upt.id') }}</th>
+                            <th>{{ lang_manager.get_text('common.username') }}</th>
+                            <th>{{ lang_manager.get_text('upt.fullname') }}</th>
+                            <th>{{ lang_manager.get_text('upt.sites') }}</th>
+                            <th>{{ lang_manager.get_text('common.actions') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody id="uptsTableBody">
+                        <!-- UPTs will be loaded here dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Add/Edit UPT Modal -->
+<div class="modal fade" id="uptModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="uptModalTitle">{{ lang_manager.get_text('upt.add') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="uptForm">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="mb-3">
+                        <label for="uptId" class="form-label">{{ lang_manager.get_text('upt.id') }}</label>
+                        <input type="text" class="form-control" id="uptId" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="uptUsername" class="form-label">{{ lang_manager.get_text('common.username') }}</label>
+                        <input type="text" class="form-control" id="uptUsername" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="uptFullname" class="form-label">{{ lang_manager.get_text('upt.fullname') }}</label>
+                        <input type="text" class="form-control" id="uptFullname" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="uptPassword" class="form-label">{{ lang_manager.get_text('common.password') }}</label>
+                        <input type="password" class="form-control" id="uptPassword" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ lang_manager.get_text('common.cancel') }}</button>
+                <button type="button" class="btn btn-primary" id="saveUptBtn">{{ lang_manager.get_text('common.save') }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}{% endblock %} 

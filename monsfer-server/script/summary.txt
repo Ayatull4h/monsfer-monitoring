@@ -1,0 +1,71 @@
+Ringkasan Perubahan pada Sistem MONSFER-SERVER
+
+1. Perubahan pada Sistem Database
+   - Migrasi dari MySQL ke JSON file (userdata.json)
+   - Implementasi class DatabaseOperations untuk manajemen data
+   - Penambahan sistem logging untuk tracking error
+   - Implementasi password hashing dengan salt untuk keamanan
+
+2. Struktur Database JSON
+   - Format data:
+     {
+       "admin": {
+         "username": string,
+         "password": string (hashed),
+         "salt": string,
+         "settings": object
+       },
+       "upt": {
+         "UPT_ID": {
+           "id_upt": string,
+           "fullname": string,
+           "username": string,
+           "password": string (hashed),
+           "salt": string,
+           "sites": array
+         }
+       }
+     }
+
+3. Fitur Keamanan yang Ditambahkan
+   - Password hashing menggunakan SHA-256
+   - Implementasi salt untuk setiap password
+   - Sistem migrasi password lama ke format baru dengan salt
+   - Validasi input dan error handling
+
+4. Method Database yang Diimplementasi
+   a. Admin Management:
+      - verify_admin(): Verifikasi kredensial admin
+      - get_admin_settings(): Ambil pengaturan admin
+      - update_admin_settings(): Update pengaturan admin
+      - update_all_passwords_with_salt(): Migrasi password ke format baru
+
+   b. UPT Management:
+      - get_all_upts(): Ambil semua data UPT
+      - add_upt(): Tambah UPT baru
+      - update_upt(): Update data UPT
+      - delete_upt(): Hapus UPT
+
+   c. Utility Methods:
+      - load_database(): Load data dari file JSON
+      - save_database(): Simpan data ke file JSON
+      - initialize_database(): Inisialisasi struktur database
+      - format_id(): Format ID UPT dan Site
+
+5. Konfigurasi Sistem
+   - Pengaturan path file di config.py
+   - Konfigurasi logging
+   - Format ID untuk UPT dan Site
+
+6. Error Handling
+   - Implementasi try-catch di setiap operasi database
+   - Logging error ke file app.log
+   - Validasi input sebelum operasi database
+   - Pengecekan keberadaan data sebelum operasi
+
+7. Struktur File
+   - db_operations.py: Class utama untuk operasi database
+   - config.py: Konfigurasi sistem
+   - init_db.py: Script inisialisasi database
+   - userdata.json: File database
+   - logs/: Direktori untuk file log 

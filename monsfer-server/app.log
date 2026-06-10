@@ -1,0 +1,93 @@
+2025-04-27 02:48:53,612 - __main__ - INFO - Admin user created successfully
+2025-04-27 02:48:53,623 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://10.100.80.110:5001
+2025-04-27 02:48:53,623 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-04-27 02:48:53,623 - werkzeug - INFO -  * Restarting with stat
+2025-04-27 02:48:53,739 - werkzeug - WARNING -  * Debugger is active!
+2025-04-27 02:48:53,741 - werkzeug - INFO -  * Debugger PIN: 248-402-365
+2025-04-27 02:48:57,776 - werkzeug - INFO - 10.100.80.25 - - [27/Apr/2025 02:48:57] "GET /dashboard HTTP/1.1" 200 -
+2025-04-27 02:48:58,701 - werkzeug - INFO - 10.100.80.25 - - [27/Apr/2025 02:48:58] "GET /dashboard HTTP/1.1" 200 -
+2025-04-27 02:48:59,376 - werkzeug - INFO - 10.100.80.25 - - [27/Apr/2025 02:48:59] "GET /dashboard HTTP/1.1" 200 -
+2025-04-27 02:48:59,558 - werkzeug - INFO - 10.100.80.25 - - [27/Apr/2025 02:48:59] "GET /dashboard HTTP/1.1" 200 -
+2025-04-27 02:48:59,713 - werkzeug - INFO - 10.100.80.25 - - [27/Apr/2025 02:48:59] "GET /dashboard HTTP/1.1" 200 -
+2025-04-27 02:48:59,856 - werkzeug - INFO - 10.100.80.25 - - [27/Apr/2025 02:48:59] "GET /dashboard HTTP/1.1" 200 -
+2025-04-27 02:49:00,018 - werkzeug - INFO - 10.100.80.25 - - [27/Apr/2025 02:49:00] "GET /dashboard HTTP/1.1" 200 -
+2025-04-27 02:49:10,238 - werkzeug - INFO - 10.100.80.25 - - [27/Apr/2025 02:49:10] "POST /api/sites HTTP/1.1" 200 -
+2025-04-27 02:49:10,267 - werkzeug - INFO - 10.100.80.25 - - [27/Apr/2025 02:49:10] "GET /dashboard HTTP/1.1" 200 -
+2025-04-27 02:52:20,140 - werkzeug - INFO - 10.100.80.25 - - [27/Apr/2025 02:52:20] "GET /dashboard HTTP/1.1" 200 -
+2025-04-27 02:52:21,747 - werkzeug - INFO - 10.100.80.25 - - [27/Apr/2025 02:52:21] "GET /dashboard HTTP/1.1" 200 -
+2025-04-27 02:52:24,776 - werkzeug - INFO - 10.100.80.25 - - [27/Apr/2025 02:52:24] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-04-27 02:52:24,786 - werkzeug - INFO - 10.100.80.25 - - [27/Apr/2025 02:52:24] "GET /login HTTP/1.1" 200 -
+2025-04-27 02:52:28,386 - werkzeug - INFO - 10.100.80.25 - - [27/Apr/2025 02:52:28] "[32mPOST /login HTTP/1.1[0m" 302 -
+2025-04-27 02:52:28,393 - werkzeug - INFO - 10.100.80.25 - - [27/Apr/2025 02:52:28] "GET /dashboard HTTP/1.1" 200 -
+2025-04-27 02:54:27,715 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://10.100.80.110:5001
+2025-04-27 02:54:27,715 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-04-27 02:54:27,715 - werkzeug - INFO -  * Restarting with stat
+2025-04-27 02:54:27,833 - werkzeug - WARNING -  * Debugger is active!
+2025-04-27 02:54:27,834 - werkzeug - INFO -  * Debugger PIN: 248-402-365
+2025-04-27 02:54:31,095 - werkzeug - INFO - 10.100.80.25 - - [27/Apr/2025 02:54:31] "[32mGET /dashboard HTTP/1.1[0m" 302 -
+2025-04-27 02:54:31,107 - werkzeug - INFO - 10.100.80.25 - - [27/Apr/2025 02:54:31] "GET /login HTTP/1.1" 200 -
+2025-04-27 02:54:36,624 - werkzeug - INFO - 10.100.80.25 - - [27/Apr/2025 02:54:36] "[32mPOST /login HTTP/1.1[0m" 302 -
+2025-04-27 02:54:36,638 - werkzeug - INFO - 10.100.80.25 - - [27/Apr/2025 02:54:36] "GET /dashboard HTTP/1.1" 200 -
+2025-04-27 02:54:53,354 - werkzeug - INFO - 10.100.80.25 - - [27/Apr/2025 02:54:53] "POST /api/upts HTTP/1.1" 200 -
+2025-04-27 02:54:53,380 - werkzeug - INFO - 10.100.80.25 - - [27/Apr/2025 02:54:53] "GET /dashboard HTTP/1.1" 200 -
+2025-04-27 02:55:43,888 - werkzeug - INFO - 10.100.80.25 - - [27/Apr/2025 02:55:43] "POST /api/upts/7/sites HTTP/1.1" 200 -
+2025-04-27 02:55:43,913 - werkzeug - INFO - 10.100.80.25 - - [27/Apr/2025 02:55:43] "GET /dashboard HTTP/1.1" 200 -
+2025-04-27 02:55:59,574 - werkzeug - INFO - 10.100.80.25 - - [27/Apr/2025 02:55:59] "POST /api/upts HTTP/1.1" 200 -
+2025-04-27 02:55:59,600 - werkzeug - INFO - 10.100.80.25 - - [27/Apr/2025 02:55:59] "GET /dashboard HTTP/1.1" 200 -
+2025-04-27 02:56:38,572 - werkzeug - INFO - 10.100.80.25 - - [27/Apr/2025 02:56:38] "POST /api/upts/1/sites HTTP/1.1" 200 -
+2025-04-27 02:56:38,594 - werkzeug - INFO - 10.100.80.25 - - [27/Apr/2025 02:56:38] "GET /dashboard HTTP/1.1" 200 -
+2025-04-27 02:56:59,518 - werkzeug - INFO - 10.100.80.25 - - [27/Apr/2025 02:56:59] "POST /api/upts/7/sites HTTP/1.1" 200 -
+2025-04-27 02:56:59,542 - werkzeug - INFO - 10.100.80.25 - - [27/Apr/2025 02:56:59] "GET /dashboard HTTP/1.1" 200 -
+2025-04-27 02:59:08,370 - werkzeug - INFO -  * Detected change in '/home/monsfer-server/monsfer-server/script/config.py', reloading
+2025-04-27 02:59:08,391 - werkzeug - INFO -  * Restarting with stat
+2025-04-27 02:59:08,500 - __main__ - INFO - Starting MONSFER server...
+2025-04-27 02:59:08,500 - __main__ - INFO - Debug mode: True
+2025-04-27 02:59:08,500 - __main__ - INFO - Running on 0.0.0.0:5001
+2025-04-27 02:59:08,507 - werkzeug - WARNING -  * Debugger is active!
+2025-04-27 02:59:08,508 - werkzeug - INFO -  * Debugger PIN: 248-402-365
+2025-04-27 02:59:09,517 - werkzeug - INFO -  * Detected change in '/home/monsfer-server/monsfer-server/script/init_db.py', reloading
+2025-04-27 02:59:09,538 - werkzeug - INFO -  * Restarting with stat
+2025-04-27 02:59:09,649 - __main__ - INFO - Starting MONSFER server...
+2025-04-27 02:59:09,649 - __main__ - INFO - Debug mode: True
+2025-04-27 02:59:09,649 - __main__ - INFO - Running on 0.0.0.0:5001
+2025-04-27 02:59:09,656 - werkzeug - WARNING -  * Debugger is active!
+2025-04-27 02:59:09,657 - werkzeug - INFO -  * Debugger PIN: 248-402-365
+2025-04-27 02:59:12,739 - werkzeug - INFO - 10.100.80.25 - - [27/Apr/2025 02:59:12] "GET /dashboard HTTP/1.1" 200 -
+2025-04-27 02:59:15,021 - __main__ - INFO - Starting MONSFER server...
+2025-04-27 02:59:15,021 - __main__ - INFO - Debug mode: True
+2025-04-27 02:59:15,021 - __main__ - INFO - Running on 0.0.0.0:5001
+2025-04-27 02:59:15,029 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://10.100.80.110:5001
+2025-04-27 02:59:15,029 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-04-27 02:59:15,030 - werkzeug - INFO -  * Restarting with stat
+2025-04-27 02:59:15,137 - __main__ - INFO - Starting MONSFER server...
+2025-04-27 02:59:15,137 - __main__ - INFO - Debug mode: True
+2025-04-27 02:59:15,137 - __main__ - INFO - Running on 0.0.0.0:5001
+2025-04-27 02:59:15,144 - werkzeug - WARNING -  * Debugger is active!
+2025-04-27 02:59:15,145 - werkzeug - INFO -  * Debugger PIN: 248-402-365
+2025-04-27 02:59:18,178 - werkzeug - INFO - 10.100.80.25 - - [27/Apr/2025 02:59:18] "GET /dashboard HTTP/1.1" 200 -
+2025-04-27 03:02:36,152 - werkzeug - INFO -  * Detected change in '/home/monsfer-server/monsfer-server/script/app.py', reloading
+2025-04-27 03:02:36,181 - werkzeug - INFO -  * Restarting with stat
+2025-04-27 03:02:36,296 - __main__ - INFO - Starting MONSFER server...
+2025-04-27 03:02:36,296 - __main__ - INFO - Debug mode: True
+2025-04-27 03:02:36,296 - __main__ - INFO - Running on 0.0.0.0:5001
+2025-04-27 03:02:36,303 - werkzeug - WARNING -  * Debugger is active!
+2025-04-27 03:02:36,304 - werkzeug - INFO -  * Debugger PIN: 248-402-365
+2025-04-27 03:02:37,309 - werkzeug - INFO -  * Detected change in '/home/monsfer-server/monsfer-server/script/config.py', reloading
+2025-04-27 03:02:37,334 - werkzeug - INFO -  * Restarting with stat
+2025-04-27 03:02:37,450 - __main__ - INFO - Starting MONSFER server...
+2025-04-27 03:02:37,450 - __main__ - INFO - Debug mode: True
+2025-04-27 03:02:37,451 - __main__ - INFO - Running on 0.0.0.0:5001
+2025-04-27 03:02:37,457 - werkzeug - WARNING -  * Debugger is active!
+2025-04-27 03:02:37,459 - werkzeug - INFO -  * Debugger PIN: 248-402-365
+2025-04-27 03:02:43,289 - werkzeug - INFO - 10.100.80.25 - - [27/Apr/2025 03:02:43] "GET /dashboard HTTP/1.1" 200 -
+2025-04-27 03:05:49,503 - werkzeug - INFO -  * Detected change in '/home/monsfer-server/monsfer-server/script/db_operations.py', reloading
+2025-04-27 03:05:49,531 - werkzeug - INFO -  * Restarting with stat
