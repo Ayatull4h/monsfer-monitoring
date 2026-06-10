@@ -1,7 +1,33 @@
-userdata/
-scratch/
-logs/
-debug_api.log
+# Dependency directories
+venv/
+.venv/
+
+# Byte-compiled
 *.pyc
 __pycache__/
+
+# Environment
 .env
+
+# Logs & temp
+logs/
+debug_api.log
+mosquitto.log.*
+mosquitto/data/
+mosquitto/log/
+
+# Generated data
+monsfer/data_upload/
+monsfer/data_archive/
+monsfer/data_capture/
+
+# User data / scratch
+userdata/
+scratch/
+
+# Config backups
+*.bak
+
+# OS artifacts
+.DS_Store
+Thumbs.db
