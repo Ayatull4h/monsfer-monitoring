@@ -1,0 +1,7 @@
+userdata/
+scratch/
+logs/
+debug_api.log
+*.pyc
+__pycache__/
+.env
