@@ -28,6 +28,11 @@ scratch/
 # Config backups
 *.bak
 
+# Large binaries / archives
+*.zip
+*.exe
+*.msi
+
 # OS artifacts
 .DS_Store
 Thumbs.db
