@@ -1,27 +1,80 @@
 #!/bin/bash
+set -euo pipefail
 
-# Activate venv
-source venv/bin/activate
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+VENV_DIR="${BASE_DIR}/venv"
+PID_DIR="${BASE_DIR}"
 
-# Start all agents in background
-echo "Starting Agents..."
+AGENTS=(
+    "agent_acquisition.py:acquisition"
+    "agent_health.py:health"
+    "agent_wifi.py:wifi"
+    "agent_sync.py:sync"
+)
 
-nohup python3 agent_health.py > /dev/null 2>&1 &
-echo "Started Health Agent (PID: $!)"
+start_all() {
+    echo "Starting all SDR agents..."
+    for entry in "${AGENTS[@]}"; do
+        script="${entry%%:*}"
+        name="${entry##*:}"
+        pid_file="${PID_DIR}/${name}.pid"
 
-nohup python3 agent_wifi.py > /dev/null 2>&1 &
-echo "Started WiFi Agent (PID: $!)"
+        if [ -f "$pid_file" ] && kill -0 "$(cat "$pid_file")" 2>/dev/null; then
+            echo "  [SKIP] $name already running (PID: $(cat "$pid_file"))"
+            continue
+        fi
 
-nohup python3 agent_sync.py > /dev/null 2>&1 &
-echo "Started Sync Agent (PID: $!)"
+        nohup python3 "${BASE_DIR}/${script}" > /dev/null 2>&1 &
+        echo $! > "$pid_file"
+        echo "  [START] $name (PID: $!)"
+    done
+    echo "Done."
+}
 
-nohup python3 agent_acquisition.py > /dev/null 2>&1 &
-echo "Started Acquisition Agent (PID: $!)"
+stop_all() {
+    echo "Stopping all SDR agents..."
+    for entry in "${AGENTS[@]}"; do
+        name="${entry##*:}"
+        pid_file="${PID_DIR}/${name}.pid"
 
-nohup python3 agent_poller.py > /dev/null 2>&1 &
-echo "Started Poller Agent (PID: $!)"
+        if [ ! -f "$pid_file" ]; then
+            echo "  [SKIP] $name (no pid file)"
+            continue
+        fi
 
-nohup python3 agent_ui.py > /dev/null 2>&1 &
-echo "Started Local Agent UI (PID: $!) on Port 5100"
+        pid=$(cat "$pid_file")
+        if kill "$pid" 2>/dev/null; then
+            echo "  [STOP] $name (PID: $pid)"
+        else
+            echo "  [STOP] $name (not running)"
+        fi
+        rm -f "$pid_file"
+    done
+    echo "Done."
+}
 
-echo "All agents started."
+status_all() {
+    echo "SDR Agent Status:"
+    echo "-----------------"
+    for entry in "${AGENTS[@]}"; do
+        name="${entry##*:}"
+        pid_file="${PID_DIR}/${name}.pid"
+
+        if [ -f "$pid_file" ] && kill -0 "$(cat "$pid_file")" 2>/dev/null; then
+            echo "  [RUNNING] $name (PID: $(cat "$pid_file"))"
+        else
+            echo "  [STOPPED] $name"
+        fi
+    done
+}
+
+case "${1:-start}" in
+    start)   start_all ;;
+    stop)    stop_all  ;;
+    restart) stop_all; sleep 1; start_all ;;
+    status)  status_all ;;
+    *)
+        echo "Usage: $0 {start|stop|restart|status}"
+        exit 1
+        ;;
+esac
