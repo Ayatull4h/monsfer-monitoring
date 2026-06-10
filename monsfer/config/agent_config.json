@@ -1,7 +1,7 @@
 {
   "station_id": "07001",
   "token": "default",
-  "server_url": "http://localhost:5102",
+  "server_url": "http://10.100.80.140:5000",
   "directories": {
     "data": "data_capture",
     "upload": "data_upload",

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SERVER_URL="${SERVER_URL:-http://10.100.80.140:8000}"
+SERVER_URL="${SERVER_URL:-http://10.100.80.140:5000}"
 OWNER="${OWNER:-semarang}"
 SITE="${SITE:-plamongan indah}"
 STATION_ID="${STATION_ID:-07plamongan_indah}"
